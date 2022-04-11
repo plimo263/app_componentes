@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Container, Typography } from '@mui/material';
+import Tabela from './components/tabela';
+import DATA from './data/MOCK_DATA.json'
+import { format, parseISO } from 'date-fns';
 
-function App() {
+export const App = () => {
+  const cabe = [
+      {
+        Header: 'ID',
+        accessor: 'id',
+      },
+      {
+        Header: 'Firstname',
+        accessor: 'first_name',
+      },
+      {
+        Header: 'Lastname',
+        accessor: 'last_name',
+      },
+      {
+        Header: 'Email',
+        accessor: 'email',
+      },
+      {
+        Header: 'Gender',
+        accessor: 'gender',
+      },
+      {
+        Header: 'Birth Day',
+        accessor: 'birth_day',
+        Cell: ({ value })=> format(parseISO(value), 'dd/MM')
+      },
+  ];
+  const corpo = DATA;
+  // 
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Container>
+      <Typography variant='h5' align='center'>
+        Teste com a tabela usando o react-table
+      </Typography>
+      <Tabela 
+        cabe={cabe}
+        corpo={corpo}
+      />
+    </Container>
+  )
 }
-
 export default App;
