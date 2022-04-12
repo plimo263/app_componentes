@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stack, Checkbox, Container, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import Tabela from './components/tabela';
 import DATA from './data/MOCK_DATA.json'
 // import { format, parseISO } from 'date-fns';
@@ -19,7 +19,7 @@ export const App = () => {
   const corpo = DATA;
   // 
   const optTabela = {
-    data: [5],
+    data: [4],
     trSelecionado: 0,
     // envolver: {
     //   0: (val, idx, row)=> {
@@ -48,8 +48,21 @@ export const App = () => {
       <Tabela 
         cabe={cabe}
         corpo={corpo}
-        optTabela={optTabela}
-      />
+        //sxCabecalho={{borderRadius: 0, backgroundColor: '#b78a8a', 'color': 'black', m: 0, p: 0, py: 1}}
+        {...optTabela}
+        // render={({ trSelecionado, trSelecionadoDados})=>(
+        //   <Stack direction='row' alignItems='center'>
+        //     <Checkbox />
+        //     <Typography>SELECIONAR</Typography>          
+        //   </Stack>
+        // )}
+        // styleTrSelecionado={{
+        //   backgroundColor: '#b71c1c', color: 'white',
+        // }}
+      >
+        
+      
+      </Tabela>
     </Container>
   )
 }

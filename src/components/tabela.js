@@ -1,4 +1,5 @@
-import React, { memo, useState, useMemo } from 'react'
+import React, { memo, useState, useMemo, useEffect } from 'react'
+import PropTypes from 'prop-types';
 import '../css/tabela.css';
 import { useRowSelect, useTable, useSortBy, useGlobalFilter } from 'react-table';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -7,9 +8,10 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import SearchIcon from '@mui/icons-material/Search';
 //
 import {format, parseISO } from 'date-fns';
-
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
-import { Stack, TextField, Paper, CircularProgress } from '@mui/material';
+import { Stack, TextField, Paper, CircularProgress, Typography } from '@mui/material';
+
 
 // Funcao para converter valores monetarios
 function  converter(valor){
@@ -69,8 +71,10 @@ function formatarCabe(cabe, opt){
             }
             // Senao so retorna o valor
             return value;
-            }
-        }))
+        },
+        
+        })
+        )
     ]
 }
 // Funcao para formatar o corpo
@@ -95,7 +99,7 @@ function formatarCorpo(corpo){
 }
 
 // Componente para exibir o filtro
-const Filtro = memo(({ filtro, setFiltro })=>{
+const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
     const [valor, setValor ] = useState(filtro);
@@ -111,7 +115,12 @@ const Filtro = memo(({ filtro, setFiltro })=>{
 
     return (
         <Stack direction='row-reverse'>
+            <Stack direction='row' alignItems='center'>
+                <Typography sx={{mx: 1}} variant='body2' fontWeight='bold'>
+                    {`Total: ${totalRegistros}`}
+                </Typography>
             <TextField size='small'
+                placeholder='Digite o que procura...'
                 label='Filtro' type="search"
                 value={valor} sx={{mb: .5}}
                 onChange={e=> {
@@ -126,21 +135,23 @@ const Filtro = memo(({ filtro, setFiltro })=>{
                     startAdornment: aguardar ? <CircularProgress sx={{mr: 1}} size={20} /> : <SearchIcon color='primary' />
                 }}
             />
+            </Stack>
 
         </Stack>
     )
 });
 
-const Tabela = ({ cabe, corpo, optTabela }) => {
-  const columns = useMemo(()=> formatarCabe(cabe, optTabela), [ optTabela, cabe ]);
-  const data = useMemo(()=> formatarCorpo(corpo), [corpo]);
-  const trSelecionado = optTabela?.trSelecionado;
+const Tabela = ({ sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
+  
+  const [pagina, setPagina] = useState(1);
+  const columns = useMemo(()=> formatarCabe(cabe, { data, monetario, envolver }), [ data, monetario, envolver, cabe ]);
+  const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
   
   // Criando os dados para a tabela
   const instance = useTable({
       columns,
-      data,
-      initialState: { hiddenColumns: ['id'], selectedRowIds: trSelecionado ? { [trSelecionado] : true } : {} }
+      data: registros,
+      initialState: { hiddenColumns: ['id']  }
   }, 
       useGlobalFilter,
       useSortBy,
@@ -151,21 +162,59 @@ const Tabela = ({ cabe, corpo, optTabela }) => {
       getTableProps,
       getTableBodyProps,
       headerGroups,
+      footerGroups,
       prepareRow,
       toggleAllRowsSelected,
       rows,
-      state,
+      state : {  globalFilter },
+      selectedFlatRows,
       setGlobalFilter
   } = instance;
+  // Se a quantidade de registros for menor que 101 nao
+  //
+  const [sentryRef, { rootRef }] = useInfiniteScroll({
+    //loading: aguardar,
+    // Somente ativa o observer do scroll se rows for maior que  100
+    hasNextPage: (rows.length > 100 && pagina && !globalFilter),
+    onLoadMore: ()=> {
+        setPagina(state=> state + 1);
+    },
+    delayInMs: 600, 
+    //disabled: aguardar,       
+    // `rootMargin` is passed to `IntersectionObserver`.
+    // We can use it to trigger 'onLoadMore' when the sentry comes near to become
+    // visible, instead of becoming fully visible on the screen.
+    rootMargin: '0px 0px 400px 0px',
+  });
   
+  // Fatiamento dos registros
+  const fatiaRegistros = useMemo(()=> (pagina === null) || globalFilter ? rows : rows.slice(0, pagina * 100), [rows, pagina, globalFilter] );
+  
+  // o useEffect para ver se a quantidade de registros fatiados e igual a quantidade normal
+  useEffect(()=>{
+      // Se tiver atingido o limite de registros defina o pagina como null pois não devemos pedir mais registros a tabela
+      if( !globalFilter && fatiaRegistros.length >= rows.length ) setPagina(null);
+      
+  }, [pagina, fatiaRegistros, rows, globalFilter]);
+  
+  // veja se tem rowID selecionado
+  let trSelecionado, trSelecionadoDados;
+  if(selectedFlatRows?.length > 0){
+      trSelecionado = selectedFlatRows[0].values['id'];
+      trSelecionadoDados = Object.keys(selectedFlatRows[0].values).map(key=> selectedFlatRows[0].values[key]);
+  }
+      
   return (
     <>
-          <Filtro 
-            filtro={state.globalFilter}
+    <Stack direction='row' justifyContent='space-between' alignItems='flex-end'>
+        {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
+        <Filtro 
+            filtro={globalFilter}
             setFiltro={setGlobalFilter}
-
-          />
-    <div id="tabela">
+            totalRegistros={rows?.length}
+        />
+    </Stack>
+    <div style={{height: tamanho}} ref={rootRef} id="tabela">
         <table {...getTableProps()}>
             <thead>
                 {
@@ -173,10 +222,10 @@ const Tabela = ({ cabe, corpo, optTabela }) => {
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map(column=>(
                                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                    <Paper sx={{borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1}} elevation={2}>
+                                    <Paper sx={sxCabecalho} elevation={2}>
                                         <Stack alignItems='center' direction='row' justifyContent='center'>
-                                            {column.render('Header')}
                                             {column.isSorted ? (column.isSortedDesc ? <KeyboardArrowDownIcon />: <KeyboardArrowUpIcon />) : <UnfoldMoreIcon />}
+                                            {column.render('Header')}
                                         </Stack>
                                     </Paper>
                                 </th>
@@ -190,11 +239,11 @@ const Tabela = ({ cabe, corpo, optTabela }) => {
             </thead>
             <tbody {...getTableBodyProps()}>
                 {
-                    rows.map(row=>{
+                    fatiaRegistros.map(row=>{
                         prepareRow(row);
                                                 
                         return (
-                            <tr style={row.isSelected ? {'backgroundColor': '#012258', 'color': 'white'} : {}} onClick={()=> {
+                            <tr style={row.isSelected ? styleTrSelecionado : {}} onClick={()=> {
                                     toggleAllRowsSelected(false);
                                     row.toggleRowSelected(!row.isSelected);
                             }} {...row.getRowProps()}>
@@ -212,11 +261,63 @@ const Tabela = ({ cabe, corpo, optTabela }) => {
                     })
                 }
             </tbody>
+            {calcularRodape && (
+            <tfoot>
+                {footerGroups.map(footerGroup=>(
+                    <tr {...footerGroup.getHeaderGroupProps()}>
+                        {footerGroup.headers.map(column=>(
+                            <th {...column.getHeaderProps()}>
+                            <Paper sx={{borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1}} elevation={2}>
+                                <Stack alignItems='center' direction='row' justifyContent='center'>
+                                    {column.render('Header')}
+                                </Stack>
+                            </Paper>
+                            </th>
+                        ))}
+                    </tr>
+                ))}
+            </tfoot>
+            )}
+            
         </table>
+        { pagina && !globalFilter && (
+        <Stack ref={sentryRef} direction='row' justifyContent='center'>
+            <CircularProgress size={20}  />             
+        </Stack>                        
+        )}
     </div>
     </>
   )
 }
-
+//
+Tabela.propTypes = {
+    /** Objeto que representa parametros como passados para a props sx em componentes Mui (pois o cabecalho é um Paper) */
+    sxCabecalho: PropTypes.object,
+    /** Funcao que irá disponibilizar uma props com trSelecionado e trSelecionadoDados e retornará um componente */
+    render: PropTypes.func,
+    /** Recebe o tamanho da tabela em numero (600) ou string ('650px' ou '65vh') */
+    tamanho: PropTypes.oneOfType([PropTypes.number, PropTypes.string ]),
+    /** Objeto que é um array de Strings que compoem o cabecalho da tabela */
+    cabe: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /** Um array com outro array dentro ou um objeto {id: idx, data: Array} */
+    corpo: PropTypes.array.isRequired,
+    /** Um array de numeros que representam os indices das colunas que devem ser formatadas para data */
+    data: PropTypes.arrayOf(PropTypes.number),
+    /** Um array de numeros que representam os indices das colunas que devem ser formatadas para monetario */
+    monetario: PropTypes.arrayOf(PropTypes.number),
+    /** Um objeto numeros que são os indices das colunas que receberam um componente internamente executando a função passada como valor desta chave {1: ()=> {} } */
+    envolver: PropTypes.objectOf(PropTypes.number),
+    /** Um objeto que determina um estilo a ser aplicado ao registro selecionado ex: {backgroundColor: '#b71c1c', 'color': 'white'} */
+    styleTrSelecionado: PropTypes.object,
+    /** Um boleano que determina se devemos exibir o rodape da tabela ou nao */
+    calcularRodape: PropTypes.bool.isRequired,
+}
+//
+Tabela.defaultProps = {
+    sxCabecalho: {borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1},
+    tamanho: '60vh',
+    calcularRodape: false,
+    styleTrSelecionado: {'backgroundColor': '', 'color': ''}
+}
 
 export default Tabela
