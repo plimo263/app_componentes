@@ -12,7 +12,7 @@ import TableViewIcon from '@mui/icons-material/TableView';
 import {format, parseISO } from 'date-fns';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
-import { Menu, MenuItem, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, FormControlLabel } from '@mui/material';
 
 
 // Funcao para converter valores monetarios
@@ -56,7 +56,11 @@ function formatarCabe(cabe, opt){
         ...cabe.map((ele,idx)=> ({
         Header: ele,
         accessor: idx.toString(),
+        
         Cell: ({ value, row })=>{
+            // E o valor padrao quando nao se tem dados
+            if(value === '--') return value;
+
             // Se for o campo data e ele ser esta coluna
             if(opt?.data && opt.data?.includes(idx) ){
                 return format(parseISO(value), 'dd/MM/yyyy')
@@ -103,11 +107,8 @@ function formatarCorpo(corpo){
 }
 
 // Componente para exibir o filtro
-const Filtro = memo(({ ocultarColuna, totalRegistros, filtro, setFiltro })=>{
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const fnExibir = (e) => setAnchorEl(e.currentTarget);
-    const fnFechar = () => setAnchorEl(null);
-
+const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
+   
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
     const [valor, setValor ] = useState(filtro);
@@ -120,42 +121,10 @@ const Filtro = memo(({ ocultarColuna, totalRegistros, filtro, setFiltro })=>{
 
         }, 500, [valor]
     );
-    // Funcao de callback usada para alterar a visualizacao da coluna
-    const fnOcultarColuna = (e, onChange)=>{
-        onChange(e);
-        fnFechar(); 
-    }
-    
+
     return (
-        <Stack direction='row-reverse'>
-            <Menu anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={fnFechar}
-            >
-                {ocultarColuna?.map(column=>{
-                    const { checked, onChange } = column.getToggleHiddenProps();
-                    return (
-                    <MenuItem key={column.id}>
-                        {/* <FormControlLabel control={<Checkbox {...column.getToggleHiddenProps()} />} label={column.Header} /> */}
-                        <FormControlLabel control={
-                            <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
-                                checked={checked} 
-                                onChange={e=> fnOcultarColuna(e, onChange)} 
-                                />} 
-                                label={column.Header} 
-                            />
-                        
-                    </MenuItem>
-                    )
-                    })}
-            </Menu>
-                
+        <Stack direction='row-reverse'>       
             <Stack direction='row' alignItems='center'>
-                {ocultarColuna && (
-                    <IconButton onClick={fnExibir}  title='Oculte algumas colunas que não esta utilizando'>
-                        <TableViewIcon color='primary' />
-                    </IconButton>
-                )}
                 <Typography sx={{mx: 1}} variant='body2' fontWeight='bold'>
                     {`Total: ${totalRegistros}`}
                 </Typography>
@@ -182,11 +151,19 @@ const Filtro = memo(({ ocultarColuna, totalRegistros, filtro, setFiltro })=>{
 });
 
 const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
-  
+  const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
   const columns = useMemo(()=> formatarCabe(cabe, { data, monetario, envolver }), [ data, monetario, envolver, cabe ]);
   const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
-  
+  // Para menu de exibicao para ocultar campos das tabelas
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const fnExibir = (e) => setAnchorEl(e.currentTarget);
+  const fnFechar = () => setAnchorEl(null);
+  // Funcao de callback usada para alterar a visualizacao da coluna
+  const fnOcultarColuna = (e, onChange)=>{
+        onChange(e);
+    }
+      
   // Criando os dados para a tabela
   const instance = useTable({
       columns,
@@ -207,7 +184,7 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
       prepareRow,
       toggleAllRowsSelected,
       rows,
-      state : { globalFilter },
+      state : { hiddenColumns, globalFilter },
       selectedFlatRows,
       setGlobalFilter
   } = instance;
@@ -245,17 +222,59 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
       trSelecionado = selectedFlatRows[0].values['id'];
       trSelecionadoDados = Object.keys(selectedFlatRows[0].values).map(key=> selectedFlatRows[0].values[key]);
   }
+  // Conta a quantidade de colunas ocultas
+  const qtdColunaOculta = useMemo(()=> hiddenColumns.filter(ele=> ele !== 'id').length, [hiddenColumns ] );
       
   return (
     <>
     <Stack direction='row' justifyContent='space-between' alignItems='flex-end'>
         {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
-        <Filtro 
-            filtro={globalFilter}
-            setFiltro={setGlobalFilter}
-            totalRegistros={rows?.length}
-            ocultarColuna={ocultarColuna && allColumns}
-        />
+        <Stack direction='row'>
+        {ocultarColuna && (
+                <Menu 
+                    anchorEl={anchorEl} 
+                    open={Boolean(anchorEl)}
+                    onClose={fnFechar}>
+                        <Stack spacing={1} sx={{px: 1, overflowY: 'auto', maxHeight: '60vh'}}>
+                        <TextField 
+                            variant='standard' 
+                            label='Procurar'
+                            placeholder='Digite o nome da coluna...'
+                            InputLabelProps={{shrink: true }}
+                            sx={{px: .5}} size='small' 
+                            defaultValue={buscaColuna} 
+                            onChange={e=> setBuscaColuna(e.target.value.toLowerCase() )} type="search" 
+                        />                    
+                    {allColumns?.map(column=>{
+                        if(buscaColuna.length > 0 && column.Header.toLowerCase().search(buscaColuna) === -1) return null;
+                        const { checked, onChange } = column.getToggleHiddenProps();
+                        return (
+                        <FormControlLabel control={
+                            <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
+                                checked={checked} 
+                                onChange={e=> fnOcultarColuna(e, onChange)} 
+                                />} 
+                                label={column.Header} 
+                            />
+                        )
+                        })}
+                        </Stack>
+                </Menu>
+            )}
+            {ocultarColuna && (
+                    <IconButton onClick={fnExibir}  title={qtdColunaOculta > 0 ? `Você ocultou ${qtdColunaOculta} colunas` : 'Oculte algumas colunas que não esta utilizando'}>
+                        <Badge variant='dot' color='error' badgeContent={qtdColunaOculta}>
+                            <TableViewIcon color='primary' />
+                        </Badge>
+                        
+                    </IconButton>
+                )}
+            <Filtro 
+                filtro={globalFilter}
+                setFiltro={setGlobalFilter}
+                totalRegistros={rows?.length}
+            />
+        </Stack>
     </Stack>
     <div style={{maxHeight: tamanho}} ref={rootRef} id="tabela">
         <table style={style} {...getTableProps()}>
