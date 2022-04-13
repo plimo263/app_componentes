@@ -102,6 +102,9 @@ function formatarCorpo(corpo){
         linha.forEach((cell,idx)=>{
             reg[idx] = cell;
         });
+        // Se o valor da linha for '--' entao devemos atribuir o id '--'
+        if(linha[0] === '--') reg['id'] = '--';
+
         return reg;
     });
 }
@@ -219,7 +222,7 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
   // veja se tem rowID selecionado
   let trSelecionado, trSelecionadoDados;
   if(selectedFlatRows?.length > 0){
-      trSelecionado = selectedFlatRows[0].values['id'];
+      trSelecionado = selectedFlatRows[0].values['id'] === '--' ? null : selectedFlatRows[0].values['id'];
       trSelecionadoDados = Object.keys(selectedFlatRows[0].values).map(key=> selectedFlatRows[0].values[key]);
   }
   // Conta a quantidade de colunas ocultas
