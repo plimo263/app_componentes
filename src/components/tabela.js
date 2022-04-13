@@ -141,7 +141,7 @@ const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
     )
 });
 
-const Tabela = ({ sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
+const Tabela = ({ styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
   
   const [pagina, setPagina] = useState(1);
   const columns = useMemo(()=> formatarCabe(cabe, { data, monetario, envolver }), [ data, monetario, envolver, cabe ]);
@@ -214,12 +214,12 @@ const Tabela = ({ sxCabecalho, calcularRodape, data, monetario, envolver, tamanh
             totalRegistros={rows?.length}
         />
     </Stack>
-    <div style={{height: tamanho}} ref={rootRef} id="tabela">
-        <table {...getTableProps()}>
+    <div style={{maxHeight: tamanho}} ref={rootRef} id="tabela">
+        <table style={style} {...getTableProps()}>
             <thead>
                 {
                     headerGroups.map(headerGroup=>(
-                        <tr {...headerGroup.getHeaderGroupProps()}>
+                        <tr style={styleCabe} {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map(column=>(
                                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                                     <Paper sx={sxCabecalho} elevation={2}>
@@ -237,7 +237,7 @@ const Tabela = ({ sxCabecalho, calcularRodape, data, monetario, envolver, tamanh
                 }
                 
             </thead>
-            <tbody {...getTableBodyProps()}>
+            <tbody style={styleCorpo} {...getTableBodyProps()}>
                 {
                     fatiaRegistros.map(row=>{
                         prepareRow(row);
@@ -309,11 +309,20 @@ Tabela.propTypes = {
     envolver: PropTypes.objectOf(PropTypes.number),
     /** Um objeto que determina um estilo a ser aplicado ao registro selecionado ex: {backgroundColor: '#b71c1c', 'color': 'white'} */
     styleTrSelecionado: PropTypes.object,
+    /** Um objeto que determina um estilo a ser aplicado ao corpo da tabela */
+    styleCorpo: PropTypes.object,
+    /** Um objeto que determina um estilo a ser aplicado a toda a tabela */
+    style: PropTypes.object,
+    /** Um objeto que determina um estilo a ser aplicado o cabecalho da tabela */
+    styleCabe: PropTypes.object,
     /** Um boleano que determina se devemos exibir o rodape da tabela ou nao */
     calcularRodape: PropTypes.bool.isRequired,
 }
 //
 Tabela.defaultProps = {
+    style: {},
+    styleCabe: {},
+    styleCorpo: {},
     sxCabecalho: {borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1},
     tamanho: '60vh',
     calcularRodape: false,
