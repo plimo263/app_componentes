@@ -6,11 +6,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import SearchIcon from '@mui/icons-material/Search';
+import TableViewIcon from '@mui/icons-material/TableView';
+
 //
 import {format, parseISO } from 'date-fns';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
-import { Stack, TextField, Paper, CircularProgress, Typography } from '@mui/material';
+import { Menu, MenuItem, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, FormControlLabel } from '@mui/material';
 
 
 // Funcao para converter valores monetarios
@@ -44,10 +46,12 @@ function  converter(valor){
 };
 // Funcao que recebe o cabecalho e formata ele para o padrao esperado pelo react-table
 function formatarCabe(cabe, opt){
+    
     return [
         {
             Header: 'ID',
             accessor: 'id',
+            disableGlobalFilter: true,
         },
         ...cabe.map((ele,idx)=> ({
         Header: ele,
@@ -99,7 +103,11 @@ function formatarCorpo(corpo){
 }
 
 // Componente para exibir o filtro
-const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
+const Filtro = memo(({ ocultarColuna, totalRegistros, filtro, setFiltro })=>{
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const fnExibir = (e) => setAnchorEl(e.currentTarget);
+    const fnFechar = () => setAnchorEl(null);
+
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
     const [valor, setValor ] = useState(filtro);
@@ -111,37 +119,69 @@ const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
             setAguardar(false);
 
         }, 500, [valor]
-    )
-
+    );
+    // Funcao de callback usada para alterar a visualizacao da coluna
+    const fnOcultarColuna = (e, onChange)=>{
+        onChange(e);
+        fnFechar(); 
+    }
+    
     return (
         <Stack direction='row-reverse'>
+            <Menu anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={fnFechar}
+            >
+                {ocultarColuna?.map(column=>{
+                    const { checked, onChange } = column.getToggleHiddenProps();
+                    return (
+                    <MenuItem key={column.id}>
+                        {/* <FormControlLabel control={<Checkbox {...column.getToggleHiddenProps()} />} label={column.Header} /> */}
+                        <FormControlLabel control={
+                            <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
+                                checked={checked} 
+                                onChange={e=> fnOcultarColuna(e, onChange)} 
+                                />} 
+                                label={column.Header} 
+                            />
+                        
+                    </MenuItem>
+                    )
+                    })}
+            </Menu>
+                
             <Stack direction='row' alignItems='center'>
+                {ocultarColuna && (
+                    <IconButton onClick={fnExibir}  title='Oculte algumas colunas que não esta utilizando'>
+                        <TableViewIcon color='primary' />
+                    </IconButton>
+                )}
                 <Typography sx={{mx: 1}} variant='body2' fontWeight='bold'>
                     {`Total: ${totalRegistros}`}
                 </Typography>
-            <TextField size='small'
-                placeholder='Digite o que procura...'
-                label='Filtro' type="search"
-                value={valor} sx={{mb: .5}}
-                onChange={e=> {
-                    setValor(e.target.value);
-                    setAguardar(true);
-                }}
-                autoComplete="off"
-                InputLabelProps={{
-                    shrink: true
-                }}
-                InputProps={{
-                    startAdornment: aguardar ? <CircularProgress sx={{mr: 1}} size={20} /> : <SearchIcon color='primary' />
-                }}
-            />
+                <TextField size='small'
+                    placeholder='Digite o que procura...'
+                    label='Filtro' type="search"
+                    value={valor} sx={{mb: .5}}
+                    onChange={e=> {
+                        setValor(e.target.value);
+                        setAguardar(true);
+                    }}
+                    autoComplete="off"
+                    InputLabelProps={{
+                        shrink: true
+                    }}
+                    InputProps={{
+                        startAdornment: aguardar ? <CircularProgress sx={{mr: 1}} size={20} /> : <SearchIcon color='primary' />
+                    }}
+                />
             </Stack>
 
         </Stack>
     )
 });
 
-const Tabela = ({ styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
+const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
   
   const [pagina, setPagina] = useState(1);
   const columns = useMemo(()=> formatarCabe(cabe, { data, monetario, envolver }), [ data, monetario, envolver, cabe ]);
@@ -162,14 +202,16 @@ const Tabela = ({ styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, dat
       getTableProps,
       getTableBodyProps,
       headerGroups,
+      allColumns,
       footerGroups,
       prepareRow,
       toggleAllRowsSelected,
       rows,
-      state : {  globalFilter },
+      state : { globalFilter },
       selectedFlatRows,
       setGlobalFilter
   } = instance;
+  
   // Se a quantidade de registros for menor que 101 nao
   //
   const [sentryRef, { rootRef }] = useInfiniteScroll({
@@ -212,6 +254,7 @@ const Tabela = ({ styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, dat
             filtro={globalFilter}
             setFiltro={setGlobalFilter}
             totalRegistros={rows?.length}
+            ocultarColuna={ocultarColuna && allColumns}
         />
     </Stack>
     <div style={{maxHeight: tamanho}} ref={rootRef} id="tabela">
@@ -317,10 +360,13 @@ Tabela.propTypes = {
     styleCabe: PropTypes.object,
     /** Um boleano que determina se devemos exibir o rodape da tabela ou nao */
     calcularRodape: PropTypes.bool.isRequired,
+    /** Um boleano que determina se vamos disponibilizar a opcao para ocultar colunas */
+    ocultarColuna: PropTypes.bool,
 }
 //
 Tabela.defaultProps = {
     style: {},
+    ocultarColuna: false,
     styleCabe: {},
     styleCorpo: {},
     sxCabecalho: {borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1},

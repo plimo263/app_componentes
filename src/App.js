@@ -50,6 +50,7 @@ export const App = () => {
         corpo={corpo}
         styleCorpo={{fontSize: '80%'}}
         styleCabe={{fontSize: '80%'}}
+        ocultarColuna
         //sxCabecalho={{borderRadius: 0, backgroundColor: '#b78a8a', 'color': 'black', m: 0, p: 0, py: 1}}
         {...optTabela}
         // render={({ trSelecionado, trSelecionadoDados})=>(
