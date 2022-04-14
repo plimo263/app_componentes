@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Typography } from '@mui/material';
 import Tabela from './components/tabela';
-import DATA from './data/MOCK_DATA.json'
+import DATA from './data/MOCK_DATA2.json'
 // import { format, parseISO } from 'date-fns';
 
 export const App = () => {
@@ -13,10 +13,8 @@ export const App = () => {
   //   ['Heitor', 'Souza', 'plimo263@gmail.com', '31 97565-0405', 'Rua imbiaca 222', '2022-10-01', '2022-04-11 21:00', '650.69'],
     
   // ];
-  const cabe = [
-    'Firstname', 'lastname', 'email', 'gender', 'Birth Day'
-  ]
-  const corpo = DATA;
+  const cabe = DATA.cabe;
+  const corpo = DATA.corpo;
   // 
   const optTabela = {
     data: [4],

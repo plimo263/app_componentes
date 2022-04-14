@@ -234,7 +234,7 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
         {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
         <Stack direction='row'>
         {ocultarColuna && (
-                <Menu 
+                <Menu
                     anchorEl={anchorEl} 
                     open={Boolean(anchorEl)}
                     onClose={fnFechar}>
@@ -251,13 +251,13 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                     {allColumns?.map(column=>{
                         if(buscaColuna.length > 0 && column.Header.toLowerCase().search(buscaColuna) === -1) return null;
                         const { checked, onChange } = column.getToggleHiddenProps();
+                        
                         return (
-                        <FormControlLabel control={
-                            <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
-                                checked={checked} 
-                                onChange={e=> fnOcultarColuna(e, onChange)} 
-                                />} 
-                                label={column.Header} 
+                            <OptFiltroTabela
+                                key={column.Header}
+                                Header={column.Header}
+                                fnOcultarColuna={e=> fnOcultarColuna(e, onChange)}
+                                checked={checked}
                             />
                         )
                         })}
@@ -265,12 +265,10 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                 </Menu>
             )}
             {ocultarColuna && (
-                    <IconButton onClick={fnExibir}  title={qtdColunaOculta > 0 ? `Você ocultou ${qtdColunaOculta} colunas` : 'Oculte algumas colunas que não esta utilizando'}>
-                        <Badge variant='dot' color='error' badgeContent={qtdColunaOculta}>
-                            <TableViewIcon color='primary' />
-                        </Badge>
-                        
-                    </IconButton>
+                    <IconeOcultarColuna 
+                        fnExibir={fnExibir}
+                        qtdColunaOculta={qtdColunaOculta}
+                    />
                 )}
             <Filtro 
                 filtro={globalFilter}
@@ -285,16 +283,28 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                 {
                     headerGroups.map(headerGroup=>(
                         <tr style={styleCabe} {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column=>(
-                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                    <Paper sx={sxCabecalho} elevation={2}>
-                                        <Stack alignItems='center' direction='row' justifyContent='center'>
-                                            {column.isSorted ? (column.isSortedDesc ? <KeyboardArrowDownIcon />: <KeyboardArrowUpIcon />) : <UnfoldMoreIcon />}
-                                            {column.render('Header')}
-                                        </Stack>
-                                    </Paper>
-                                </th>
-                            ))}
+                            {headerGroup.headers.map((column,idx)=>{
+                                // return (
+                                //     <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                //         <Paper sx={sxCabecalho} elevation={2}>
+                                //             <Stack alignItems='center' direction='row' justifyContent='center'>
+                                //                 {column.isSorted ? (column.isSortedDesc ? <KeyboardArrowDownIcon />: <KeyboardArrowUpIcon />) : <UnfoldMoreIcon />}
+                                //                 {column.render('Header')}
+                                //             </Stack>
+                                //         </Paper>
+                                //     </th>
+                                // )
+                                
+                                return (
+                                <ThCabe 
+                                    key={column.getHeaderProps().key}
+                                    column={column}
+                                    sxCabecalho={sxCabecalho}
+                                    isSorted={column.isSorted}
+                                    isSortedDesc={column.isSortedDesc}                                
+                                />
+                                )
+                            })}
                             
                         </tr>
 
@@ -306,23 +316,35 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                 {
                     fatiaRegistros.map(row=>{
                         prepareRow(row);
-                                                
+                        //console.log(row.getRowProps().key);
                         return (
-                            <tr style={row.isSelected ? styleTrSelecionado : {}} onClick={()=> {
-                                    toggleAllRowsSelected(false);
-                                    row.toggleRowSelected(!row.isSelected);
-                            }} {...row.getRowProps()}>
-                                {
-                                row.cells.map(cell=>{
-                                    return (
-                                        <td {...cell.getCellProps()}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
-                                })
-                            }
-                            </tr>
+                        <tr style={row.isSelected ? styleTrSelecionado : {}} onClick={()=> {
+                                toggleAllRowsSelected(false);
+                                row.toggleRowSelected(!row.isSelected);
+                        }} {...row.getRowProps()}>
+                            {
+                            row.cells.map(cell=>{
+                                return (
+                                    <td {...cell.getCellProps()}>
+                                        {cell.render('Cell')}
+                                    </td>
+                                )
+                            })
+                        }
+                        </tr>
                         )
+                        // const obj = row.getRowProps();
+                                                
+                        // return (
+                        //     <TrCorpo key={obj.key}
+                        //         toggleRowSelected={row.toggleRowSelected}
+                        //         getRowProps={obj}
+                        //         isSelected={row.isSelected}
+                        //         styleTrSelecionado={styleTrSelecionado}
+                        //         toggleAllRowsSelected={row.toggleAllRowsSelected}
+                        //         cells={row.cells}
+                        //     />
+                        // )
                     })
                 }
             </tbody>
@@ -354,6 +376,53 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
     </>
   )
 }
+//
+const OptFiltroTabela = memo( ({ Header, checked, fnOcultarColuna })=>(
+    <FormControlLabel control={
+        <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
+            checked={checked} 
+            onChange={fnOcultarColuna} 
+            />} 
+            label={Header} 
+        />
+) )
+// Componente do cabecalho
+const ThCabe  = memo( ({ column, isSorted, isSortedDesc, sxCabecalho })=>(
+    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+        <Paper sx={sxCabecalho} elevation={2}>
+            <Stack alignItems='center' direction='row' justifyContent='center'>
+                {isSorted ? (isSortedDesc ? <KeyboardArrowDownIcon />: <KeyboardArrowUpIcon />) : <UnfoldMoreIcon />}
+                {column.render('Header')}
+            </Stack>
+        </Paper>
+    </th>
+) );
+// Componente para o registro
+const TrCorpo = memo( ({ toggleRowSelected, obj, isSelected, styleTrSelecionado, toggleAllRowsSelected, cells })=>(
+    <tr style={isSelected ? styleTrSelecionado : {}} onClick={()=> {
+            toggleAllRowsSelected(false);
+            toggleRowSelected(!isSelected);
+    }} {...obj}>
+        {
+        cells.map(cell=>{
+            return (
+                <td {...cell.getCellProps()}>
+                    {cell.render('Cell')}
+                </td>
+            )
+        })
+    }
+    </tr>
+) )
+// Componente que representa o menu para ocultar coluna
+const IconeOcultarColuna = memo( ({ fnExibir, qtdColunaOculta })=>(
+    <IconButton onClick={fnExibir}  title={qtdColunaOculta > 0 ? `Você ocultou ${qtdColunaOculta} colunas` : 'Oculte algumas colunas que não esta utilizando'}>
+        <Badge variant='dot' color='error' badgeContent={qtdColunaOculta}>
+            <TableViewIcon color='primary' />
+        </Badge>
+        
+    </IconButton>
+) );
 //
 Tabela.propTypes = {
     /** Objeto que representa parametros como passados para a props sx em componentes Mui (pois o cabecalho é um Paper) */
@@ -397,4 +466,4 @@ Tabela.defaultProps = {
     styleTrSelecionado: {'backgroundColor': '', 'color': ''}
 }
 
-export default Tabela
+export default memo(Tabela)
