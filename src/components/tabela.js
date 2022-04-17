@@ -1,4 +1,5 @@
-import React, { memo, useState, useMemo, useEffect } from 'react'
+import React, { memo, useState, useMemo, useEffect, useCallback } from 'react'
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import '../css/tabela.css';
 import { useRowSelect, useTable, useSortBy, useGlobalFilter } from 'react-table';
@@ -62,15 +63,19 @@ function formatarCabe(cabe, opt){
             if(value === '--') return value;
 
             // Se for o campo data e ele ser esta coluna
-            if(opt?.data && opt.data?.includes(idx) ){
+            if(opt?.data && opt.data?.includes(idx) && value?.length > 7 ){
                 return format(parseISO(value), 'dd/MM/yyyy')
+            }
+            // Se for o campo dataCustom entao eu devo customizar  com a datastring enviada
+            if(opt?.dataCustom && Object.keys(opt.dataCustom).includes( idx.toString() ) ){
+                return format(parseISO(value), opt.dataCustom[idx] );
             }
             // Se o indice for monetario
             if(opt?.monetario && opt?.monetario.includes(idx)){
                 return converter(value);
             }
             // Se a formatacao for data/hora pode aplicar
-            if(opt?.dataHora && opt?.dataHora.includes(idx)){
+            if(opt?.dataHora && opt?.dataHora.includes(idx) && value?.length > 8){
                 return format(parseISO(value), 'dd/MM/yyyy HH:mm')
             }
             /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
@@ -80,6 +85,23 @@ function formatarCabe(cabe, opt){
             // Senao so retorna o valor
             return value;
         },
+        Footer: ({rows, column})=>{
+            //console.log(data)
+            // // E o campo monetario vamos somar a coluna e retornar o valor
+            if(opt?.monetario && opt.monetario.includes(idx)){
+                const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
+                 return converter(valor);
+            }
+            // Se o indice da soma for acionado
+            if(opt?.soma && opt.soma.includes(idx)){
+                const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
+                return valor;
+            }
+            // // Nao precisa de calculo retorne o valor da coluna
+            return column.Header;
+            
+            
+        } 
         
         })
         )
@@ -110,7 +132,7 @@ function formatarCorpo(corpo){
 }
 
 // Componente para exibir o filtro
-const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
+const Filtro = memo(({ desativarPesquisaLenta, totalRegistros, filtro, setFiltro })=>{
    
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
@@ -122,7 +144,7 @@ const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
             setFiltro(valor);
             setAguardar(false);
 
-        }, 500, [valor]
+        }, desativarPesquisaLenta ? 1 : 500, [valor]
     );
 
     return (
@@ -137,7 +159,7 @@ const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
                     value={valor} sx={{mb: .5}}
                     onChange={e=> {
                         setValor(e.target.value);
-                        setAguardar(true);
+                        !desativarPesquisaLenta && setAguardar(true);
                     }}
                     autoComplete="off"
                     InputLabelProps={{
@@ -153,19 +175,19 @@ const Filtro = memo(({ totalRegistros, filtro, setFiltro })=>{
     )
 });
 
-const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado }) => {
+const Tabela = (props) => {
+  // Extraindo propriedades a serem usadas
+  const { soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
   const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
-  const columns = useMemo(()=> formatarCabe(cabe, { data, monetario, envolver }), [ data, monetario, envolver, cabe ]);
+  const columns = useMemo(()=> formatarCabe(cabe, { dataCustom, soma, data, monetario, envolver }), [ dataCustom, soma, data, monetario, envolver, cabe ]);
   const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
   // Para menu de exibicao para ocultar campos das tabelas
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const fnExibir = (e) => setAnchorEl(e.currentTarget);
-  const fnFechar = () => setAnchorEl(null);
+  const fnExibir = useCallback( (e) => setAnchorEl(e.currentTarget), []);
+  const fnFechar = useCallback( () => setAnchorEl(null) , []);
   // Funcao de callback usada para alterar a visualizacao da coluna
-  const fnOcultarColuna = (e, onChange)=>{
-        onChange(e);
-    }
+  const fnOcultarColuna = useCallback( (e, onChange)=>{ onChange(e); }, []);
       
   // Criando os dados para a tabela
   const instance = useTable({
@@ -209,7 +231,7 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
     rootMargin: '0px 0px 400px 0px',
   });
   
-  // Fatiamento dos registros
+  // Fatiamento dos registros (PONTO QUE PRECISA DE MELHORIA)
   const fatiaRegistros = useMemo(()=> (pagina === null) || globalFilter ? rows : rows.slice(0, pagina * 100), [rows, pagina, globalFilter] );
   
   // o useEffect para ver se a quantidade de registros fatiados e igual a quantidade normal
@@ -234,7 +256,7 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
         {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
         <Stack direction='row'>
         {ocultarColuna && (
-                <Menu
+                <Menu 
                     anchorEl={anchorEl} 
                     open={Boolean(anchorEl)}
                     onClose={fnFechar}>
@@ -248,16 +270,16 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                             defaultValue={buscaColuna} 
                             onChange={e=> setBuscaColuna(e.target.value.toLowerCase() )} type="search" 
                         />                    
-                    {allColumns?.map(column=>{
+                    {allColumns?.map((column)=>{
                         if(buscaColuna.length > 0 && column.Header.toLowerCase().search(buscaColuna) === -1) return null;
                         const { checked, onChange } = column.getToggleHiddenProps();
-                        
                         return (
-                            <OptFiltroTabela
-                                key={column.Header}
-                                Header={column.Header}
-                                fnOcultarColuna={e=> fnOcultarColuna(e, onChange)}
-                                checked={checked}
+                        <FormControlLabel key={column.Header} control={
+                            <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
+                                checked={checked} 
+                                onChange={e=> fnOcultarColuna(e, onChange)} 
+                                />} 
+                                label={column.Header} 
                             />
                         )
                         })}
@@ -265,16 +287,19 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                 </Menu>
             )}
             {ocultarColuna && (
-                    <IconeOcultarColuna 
-                        fnExibir={fnExibir}
-                        qtdColunaOculta={qtdColunaOculta}
-                    />
+                    <IconButton onClick={fnExibir}  title={qtdColunaOculta > 0 ? `Você ocultou ${qtdColunaOculta} colunas` : 'Oculte algumas colunas que não esta utilizando'}>
+                        <Badge variant='dot' color='error' badgeContent={qtdColunaOculta}>
+                            <TableViewIcon color='primary' />
+                        </Badge>
+                        
+                    </IconButton>
                 )}
-            <Filtro 
+            {ocultarFiltro ? <div /> : <Filtro 
+                desativarPesquisaLenta={corpo.length < 500}
                 filtro={globalFilter}
                 setFiltro={setGlobalFilter}
                 totalRegistros={rows?.length}
-            />
+            />}
         </Stack>
     </Stack>
     <div style={{maxHeight: tamanho}} ref={rootRef} id="tabela">
@@ -283,19 +308,7 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                 {
                     headerGroups.map(headerGroup=>(
                         <tr style={styleCabe} {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column,idx)=>{
-                                // return (
-                                //     <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                //         <Paper sx={sxCabecalho} elevation={2}>
-                                //             <Stack alignItems='center' direction='row' justifyContent='center'>
-                                //                 {column.isSorted ? (column.isSortedDesc ? <KeyboardArrowDownIcon />: <KeyboardArrowUpIcon />) : <UnfoldMoreIcon />}
-                                //                 {column.render('Header')}
-                                //             </Stack>
-                                //         </Paper>
-                                //     </th>
-                                // )
-                                
-                                return (
+                            {headerGroup.headers.map(column=>(                                
                                 <ThCabe 
                                     key={column.getHeaderProps().key}
                                     column={column}
@@ -303,8 +316,8 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                                     isSorted={column.isSorted}
                                     isSortedDesc={column.isSortedDesc}                                
                                 />
-                                )
-                            })}
+                                
+                            ))}
                             
                         </tr>
 
@@ -313,50 +326,40 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
                 
             </thead>
             <tbody style={styleCorpo} {...getTableBodyProps()}>
+                {/* Casos onde nao temos nenhum registro a ser exibido */}
+                {fatiaRegistros.length === 0 && cabe.map((ele,idx)=> <td key={idx}> -- </td>)}
                 {
                     fatiaRegistros.map(row=>{
                         prepareRow(row);
-                        //console.log(row.getRowProps().key);
-                        return (
-                        <tr style={row.isSelected ? styleTrSelecionado : {}} onClick={()=> {
-                                toggleAllRowsSelected(false);
-                                row.toggleRowSelected(!row.isSelected);
-                        }} {...row.getRowProps()}>
-                            {
-                            row.cells.map(cell=>{
-                                return (
-                                    <td {...cell.getCellProps()}>
-                                        {cell.render('Cell')}
-                                    </td>
-                                )
-                            })
-                        }
-                        </tr>
-                        )
-                        // const obj = row.getRowProps();
                                                 
-                        // return (
-                        //     <TrCorpo key={obj.key}
-                        //         toggleRowSelected={row.toggleRowSelected}
-                        //         getRowProps={obj}
-                        //         isSelected={row.isSelected}
-                        //         styleTrSelecionado={styleTrSelecionado}
-                        //         toggleAllRowsSelected={row.toggleAllRowsSelected}
-                        //         cells={row.cells}
-                        //     />
-                        // )
+                        return (
+                            <tr style={row.isSelected ? styleTrSelecionado : {}} onClick={()=> {
+                                    toggleAllRowsSelected(false);
+                                    row.toggleRowSelected(!row.isSelected);
+                            }} {...row.getRowProps()}>
+                                {
+                                row.cells.map(cell=>{
+                                    return (
+                                        <td {...cell.getCellProps()}>
+                                            {cell.render('Cell')}
+                                        </td>
+                                    )
+                                })
+                            }
+                            </tr>
+                        )
                     })
                 }
             </tbody>
             {calcularRodape && (
-            <tfoot>
+            <tfoot style={styleRodape}>
                 {footerGroups.map(footerGroup=>(
                     <tr {...footerGroup.getHeaderGroupProps()}>
                         {footerGroup.headers.map(column=>(
                             <th {...column.getHeaderProps()}>
-                            <Paper sx={{borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1}} elevation={2}>
+                            <Paper sx={sxCabecalho} elevation={2}>
                                 <Stack alignItems='center' direction='row' justifyContent='center'>
-                                    {column.render('Header')}
+                                    {column.render('Footer')}
                                 </Stack>
                             </Paper>
                             </th>
@@ -376,16 +379,6 @@ const Tabela = ({ ocultarColuna, styleCabe, style, styleCorpo, sxCabecalho, calc
     </>
   )
 }
-//
-const OptFiltroTabela = memo( ({ Header, checked, fnOcultarColuna })=>(
-    <FormControlLabel control={
-        <Checkbox inputProps={{ 'aria-label': 'controlled' }} 
-            checked={checked} 
-            onChange={fnOcultarColuna} 
-            />} 
-            label={Header} 
-        />
-) )
 // Componente do cabecalho
 const ThCabe  = memo( ({ column, isSorted, isSortedDesc, sxCabecalho })=>(
     <th {...column.getHeaderProps(column.getSortByToggleProps())}>
@@ -396,32 +389,6 @@ const ThCabe  = memo( ({ column, isSorted, isSortedDesc, sxCabecalho })=>(
             </Stack>
         </Paper>
     </th>
-) );
-// Componente para o registro
-const TrCorpo = memo( ({ toggleRowSelected, obj, isSelected, styleTrSelecionado, toggleAllRowsSelected, cells })=>(
-    <tr style={isSelected ? styleTrSelecionado : {}} onClick={()=> {
-            toggleAllRowsSelected(false);
-            toggleRowSelected(!isSelected);
-    }} {...obj}>
-        {
-        cells.map(cell=>{
-            return (
-                <td {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                </td>
-            )
-        })
-    }
-    </tr>
-) )
-// Componente que representa o menu para ocultar coluna
-const IconeOcultarColuna = memo( ({ fnExibir, qtdColunaOculta })=>(
-    <IconButton onClick={fnExibir}  title={qtdColunaOculta > 0 ? `Você ocultou ${qtdColunaOculta} colunas` : 'Oculte algumas colunas que não esta utilizando'}>
-        <Badge variant='dot' color='error' badgeContent={qtdColunaOculta}>
-            <TableViewIcon color='primary' />
-        </Badge>
-        
-    </IconButton>
 ) );
 //
 Tabela.propTypes = {
@@ -437,8 +404,12 @@ Tabela.propTypes = {
     corpo: PropTypes.array.isRequired,
     /** Um array de numeros que representam os indices das colunas que devem ser formatadas para data */
     data: PropTypes.arrayOf(PropTypes.number),
+    /** Um objeto que determina o indice e a formatacao de data que deve ser aplicada */
+    dataCustom: PropTypes.object,
     /** Um array de numeros que representam os indices das colunas que devem ser formatadas para monetario */
     monetario: PropTypes.arrayOf(PropTypes.number),
+    /** Um array de numeros que representa os indices das colunas que devem ter o seu valor de soma aplicado */
+    soma: PropTypes.arrayOf(PropTypes.number),
     /** Um objeto numeros que são os indices das colunas que receberam um componente internamente executando a função passada como valor desta chave {1: ()=> {} } */
     envolver: PropTypes.objectOf(PropTypes.number),
     /** Um objeto que determina um estilo a ser aplicado ao registro selecionado ex: {backgroundColor: '#b71c1c', 'color': 'white'} */
@@ -449,6 +420,8 @@ Tabela.propTypes = {
     style: PropTypes.object,
     /** Um objeto que determina um estilo a ser aplicado o cabecalho da tabela */
     styleCabe: PropTypes.object,
+    /** Um objeto que determina um estilo a ser aplicado no rodape da tabela */
+    styleRodape: PropTypes.object,
     /** Um boleano que determina se devemos exibir o rodape da tabela ou nao */
     calcularRodape: PropTypes.bool.isRequired,
     /** Um boleano que determina se vamos disponibilizar a opcao para ocultar colunas */
@@ -460,6 +433,7 @@ Tabela.defaultProps = {
     ocultarColuna: false,
     styleCabe: {},
     styleCorpo: {},
+    styleRodape: {},
     sxCabecalho: {borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1},
     tamanho: '60vh',
     calcularRodape: false,

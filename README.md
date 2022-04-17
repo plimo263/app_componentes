@@ -12,7 +12,8 @@ Esta é uma tabela usada como base para representação de dados. Integrada com 
 - [x] Utilizacao do campo envolver
 - [x] Filtro global
 - [x] Exibir rodape
-- [ ] Total no rodape de campos monetario e soma
+- [x] Total no rodape de campos monetario e soma
+- [x] Campo data customizado com props dataCustom (um formato aceito pelo date-fns)
 - [x] Exibicao de 100 registros na tela (no máximo)
 - [x] Quantidade de registros em exibicao no painel
 - [x] Recebimento do painel como render (com capacidade de receber o trSelecionado e se auto-configurar para select)

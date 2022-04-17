@@ -2,6 +2,7 @@ import React from 'react'
 import { Container, Typography } from '@mui/material';
 import Tabela from './components/tabela';
 import DATA from './data/MOCK_DATA2.json'
+import { lightGreen } from '@mui/material/colors'
 // import { format, parseISO } from 'date-fns';
 
 export const App = () => {
@@ -17,53 +18,30 @@ export const App = () => {
   const corpo = DATA.corpo;
   // 
   const optTabela = {
-    data: [4],
-    trSelecionado: 0,
-    // envolver: {
-    //   0: (val, idx, row)=> {
-        
-    //     return (
-    //     <Stack sx={{m: 0, p: 0}} direction='row'>
-        
-    //       <Checkbox checked={val.toLowerCase().search('a') !== -1} />
-    //       <Typography>
-    //         {val.substring(0, 3)}
-    //       </Typography>
-    //     </Stack>
-        
-    //   )
-    //     },
-    // }
-    // dataHora: [6],
-    // monetario: [7],
-  }
+    sxCabecalho: {borderRadius: 0, color: theme=> theme.palette.secondary.contrastText, backgroundColor: theme=> theme.palette.secondary.main, m: 0, p: .5},
+    styleCabe: {fontSize: '60%'},
+    styleCorpo: {fontSize: '70%', whiteSpace: 'nowrap' },
+    styleRodape: {fontSize: '80%'},
+    //dataCustom: {7: 'dd/MM',8: 'dd/MM',9: 'dd/MM'},
+    data: [7,8,9,10,11,12,13],
+    //monetario: [3,4,5,6,7,8,9,10,11,12],
+    styleTrSelecionado: { color: 'black', backgroundColor: lightGreen['500'] },
+    tamanho: '70vh',
+    calcularRodape: true,
+    
+};
 
   return (
-    <Container>
+    <Container maxWidth={false}>
       <Typography variant='h5' align='center'>
         Teste com a tabela usando o react-table
       </Typography>
       <Tabela 
         cabe={cabe}
         corpo={corpo}
-        styleCorpo={{fontSize: '80%'}}
-        styleCabe={{fontSize: '80%'}}
         ocultarColuna
-        //sxCabecalho={{borderRadius: 0, backgroundColor: '#b78a8a', 'color': 'black', m: 0, p: 0, py: 1}}
         {...optTabela}
-        // render={({ trSelecionado, trSelecionadoDados})=>(
-        //   <Stack direction='row' alignItems='center'>
-        //     <Checkbox />
-        //     <Typography>SELECIONAR</Typography>          
-        //   </Stack>
-        // )}
-        // styleTrSelecionado={{
-        //   backgroundColor: '#b71c1c', color: 'white',
-        // }}
-      >
-        
-      
-      </Tabela>
+      />
     </Container>
   )
 }
