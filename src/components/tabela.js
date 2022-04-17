@@ -15,10 +15,21 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
 import { Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, FormControlLabel } from '@mui/material';
 
+// FUncao para converter para numero de telefone
+function converterTelefone(valor){
+    // Se o valor for menor que 8 nao faca nada
+    if(valor.length < 8) return valor;
+    // Pegue os 5 primeiros digitos e depois os 4 ultimos e concatene com '-'
+    if(valor.length === 8){
+        return `${valor.substring(0, 4)}-${valor.substring(4)}`;
+    }
+    // Celular tradicional
+    return `${valor.substring(0, 5)}-${valor.substring(5, 9)}`;
+    
+}
 
 // Funcao para converter valores monetarios
 function  converter(valor){
-    
     const valorReverso = parseFloat(valor).toFixed(2).toString().replace('.',',').split("").reverse(); // Reverte a string
     let recebeConvertido = '';
     let x = 0;// Contado a cada 3 vai incluir ponto
@@ -82,11 +93,15 @@ function formatarCabe(cabe, opt){
             if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
                 return opt.envolver[idx](value, row.id, row);
             }
+            // Veja se o campo e um telefone e converta-o
+            if(opt?.telefone && opt.telefone.includes(idx) ){
+                return converterTelefone(value);
+            }
             // Senao so retorna o valor
             return value;
         },
         Footer: ({rows, column})=>{
-            //console.log(data)
+            
             // // E o campo monetario vamos somar a coluna e retornar o valor
             if(opt?.monetario && opt.monetario.includes(idx)){
                 const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
@@ -177,11 +192,18 @@ const Filtro = memo(({ desativarPesquisaLenta, totalRegistros, filtro, setFiltro
 
 const Tabela = (props) => {
   // Extraindo propriedades a serem usadas
-  const { soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
+  const { telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
   const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
-  const columns = useMemo(()=> formatarCabe(cabe, { dataCustom, soma, data, monetario, envolver }), [ dataCustom, soma, data, monetario, envolver, cabe ]);
+
+  const columns = useMemo(()=> formatarCabe(cabe, { telefone, dataCustom, soma, data, monetario, envolver }), [ telefone, dataCustom, soma, data, monetario, envolver, cabe ]);
   const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
+  // Verifica se o corpo esta sofrendo atualizacao
+  useEffect(()=>{
+    // Se o corpo esta sendo atualizado devolva a pagina para 1
+    setPagina(1);
+  }, [setPagina, corpo]);
+
   // Para menu de exibicao para ocultar campos das tabelas
   const [anchorEl, setAnchorEl] = React.useState(null);
   const fnExibir = useCallback( (e) => setAnchorEl(e.currentTarget), []);
@@ -233,13 +255,14 @@ const Tabela = (props) => {
   
   // Fatiamento dos registros (PONTO QUE PRECISA DE MELHORIA)
   const fatiaRegistros = useMemo(()=> (pagina === null) || globalFilter ? rows : rows.slice(0, pagina * 100), [rows, pagina, globalFilter] );
-  
-  // o useEffect para ver se a quantidade de registros fatiados e igual a quantidade normal
-  useEffect(()=>{
-      // Se tiver atingido o limite de registros defina o pagina como null pois não devemos pedir mais registros a tabela
-      if( !globalFilter && fatiaRegistros.length >= rows.length ) setPagina(null);
       
-  }, [pagina, fatiaRegistros, rows, globalFilter]);
+  // o useEffect para ver se a quantidade de registros fatiados e igual a quantidade normal
+//   useEffect(()=>{
+//       // Se tiver atingido o limite de registros defina o pagina como null pois não devemos pedir mais registros a tabela
+//       if( !globalFilter && fatiaRegistros.length >= rows.length ) setPagina(null);
+//       //
+      
+//   }, [corpo, pagina, fatiaRegistros, rows, globalFilter]);
   
   // veja se tem rowID selecionado
   let trSelecionado, trSelecionadoDados;
@@ -358,7 +381,7 @@ const Tabela = (props) => {
                         {footerGroup.headers.map(column=>(
                             <th {...column.getHeaderProps()}>
                             <Paper sx={sxCabecalho} elevation={2}>
-                                <Stack alignItems='center' direction='row' justifyContent='center'>
+                                <Stack sx={{pl: .5}} alignItems='center' direction='row' justifyContent='flex-start'>
                                     {column.render('Footer')}
                                 </Stack>
                             </Paper>
@@ -370,7 +393,8 @@ const Tabela = (props) => {
             )}
             
         </table>
-        { pagina && !globalFilter && (
+        {/* Isto previne que o loading fique aparecendo mesmo em registros menores que 100 */}
+        { pagina && corpo.length > 100 && (
         <Stack ref={sentryRef} direction='row' justifyContent='center'>
             <CircularProgress size={20}  />             
         </Stack>                        
