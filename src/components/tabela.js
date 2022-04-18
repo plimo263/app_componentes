@@ -568,6 +568,14 @@ const BaixarEmExcel = memo( ({ cabe, corpo, optTabela, URL })=>{
 const ModalDownloadExcel = memo( ({ fnFechar, cabe, corpo, optTabela, URL })=>{
     //
     const [baixar, setBaixar] = useState(cabe.map( (ele,idx)=> idx) );
+    // Verifica se tem campos ja marcados no localstorage e atualiza
+    useEffect(()=>{
+        const _localStorage = window?.localStorage?.getItem(`TABELA_${window.location.pathname}`);
+        // Se tiver campos salvos no localstorage traga eles para gerar o estado inicial
+        if(_localStorage){
+            setBaixar(JSON.parse(_localStorage));
+        }
+    }, []);
     // Formatar os campos da tabela baseado no conteudo de optTabela
     const novoCorpo = formatarParaDownload(corpo, optTabela);
     // Funcao com acionamento do Download para excel
@@ -586,6 +594,8 @@ const ModalDownloadExcel = memo( ({ fnFechar, cabe, corpo, optTabela, URL })=>{
             });
             _arr.push(_arrInterno);
         });
+        // Grava os campos no local_storage
+        window?.localStorage?.setItem(`TABELA_${window.location.pathname}`, JSON.stringify(_copiaCabe.map((ele)=> cabe.indexOf(ele) )) );
 
         baixarEmExcel(URL, _copiaCabe, _arr, fnFechar);
     };
