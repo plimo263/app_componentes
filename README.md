@@ -19,6 +19,8 @@ Esta é uma tabela usada como base para representação de dados. Integrada com 
 - [x] Recebimento do painel como render (com capacidade de receber o trSelecionado e se auto-configurar para select)
 - [x] Mostra mais registros a medida que vai scrollando
 - [x] Oculta colunas não utilizadas
+- [x] Baixar arquivo em Excel
+- [x] Formatação para valor percentual 
 
 #### Bibliotecas utilizadas
 

@@ -1,19 +1,104 @@
 import React, { memo, useState, useMemo, useEffect, useCallback } from 'react'
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import '../css/tabelav2.css';
+import '../css/tabela.css';
+import DialogoExibicao from './dialog';
+import Drawer from './drawer';
 import { useRowSelect, useTable, useSortBy, useGlobalFilter } from 'react-table';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import SearchIcon from '@mui/icons-material/Search';
 import TableViewIcon from '@mui/icons-material/TableView';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 //
 import {format, parseISO } from 'date-fns';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
-import { Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { useTheme, useMediaQuery, Divider, Button, Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, Container, FormControlLabel } from '@mui/material';
+
+// Funcao para fazer o download da tabela em Excel
+const baixarEmExcel = async (URL, cabe, corpo, fnFechar)=>{
+    const formData = new FormData();
+    formData.append('objeto', JSON.stringify({
+        cabe, corpo
+    }));
+
+    try {
+        const resp = await axios.post(URL, formData);
+        if(resp.status !== 200){
+            toast.dark('Erro interno do servidor.', {
+                type: 'error',
+                toastId: 'erro'
+            })
+            return false;
+        }
+        // Deu tudo certo vamos pegar o link e abri-lo para download
+        const  a = document.createElement("a");
+        a.href = resp.data;
+        a.target = '_blank';
+        a.setAttribute("download", 'TABELA');
+        a.click();
+        // Fecha o modal/dialog
+        fnFechar();
+
+    } catch(e){
+        console.log(e);
+        toast.dark('Erro desconhecido', {
+            type: 'error',
+            toastId: 'erro'
+        })
+    }
+}
+// Funcao para formatarValores (monetario, data, telefone percentual)
+const formatarValores = (valor, idx, opt)=>{
+        // E o valor padrao quando nao se tem dados
+        if(valor === '--') return valor;
+
+        // Se for o campo data e ele ser esta coluna
+        if(opt?.data && opt.data?.includes(idx) && valor?.length > 7 ){
+            return format(parseISO(valor), 'dd/MM/yyyy')
+        }
+        // Se for o campo dataCustom entao eu devo customizar  com a datastring enviada
+        if(opt?.dataCustom && Object.keys(opt.dataCustom).includes( idx.toString() ) ){
+            return format(parseISO(valor), opt.dataCustom[idx] );
+        }
+        // Se o indice for monetario
+        if(opt?.monetario && opt?.monetario.includes(idx)){
+            return converter(valor);
+        }
+        // Se a formatacao for data/hora pode aplicar
+        if(opt?.dataHora && opt?.dataHora.includes(idx) && valor?.length > 8){
+            return format(parseISO(valor), 'dd/MM/yyyy HH:mm')
+        }
+        // Se a formatacao for para percentual
+        if(opt?.percentual && opt.percentual.includes(idx) && valor?.length > 0){
+            return percentual(valor);
+        }
+        
+        // Veja se o campo e um telefone e converta-o
+        if(opt?.telefone && opt.telefone.includes(idx) ){
+            return converterTelefone(valor);
+        }
+        // Senao so retorna o valor
+        return valor;
+}
+// Funcao que formata o corpo para Download aplicando as formatacoes necessarias
+const formatarParaDownload = (corpo, opt)=>{
+    const copia = [];
+    corpo.forEach(ele=>{
+        const reg = ele.id ? ele.data : ele;
+        copia.push(
+            reg.map((value,idx)=>{
+                return formatarValores(value, idx, opt);
+            })
+        );
+    });
+    return copia;
+}
 
 // FUncao para converter para numero de telefone
 function converterTelefone(valor){
@@ -26,6 +111,11 @@ function converterTelefone(valor){
     // Celular tradicional
     return `${valor.substring(0, 5)}-${valor.substring(5, 9)}`;
     
+}
+// Funcao para formatar em percentual
+function percentual(valor){
+    const newValor = (valor * 100).toFixed(2);
+    return newValor+' %';
 }
 
 // Funcao para converter valores monetarios
@@ -70,35 +160,43 @@ function formatarCabe(cabe, opt){
         accessor: idx.toString(),
         
         Cell: ({ value, row })=>{
-            // E o valor padrao quando nao se tem dados
-            if(value === '--') return value;
 
-            // Se for o campo data e ele ser esta coluna
-            if(opt?.data && opt.data?.includes(idx) && value?.length > 7 ){
-                return format(parseISO(value), 'dd/MM/yyyy')
-            }
-            // Se for o campo dataCustom entao eu devo customizar  com a datastring enviada
-            if(opt?.dataCustom && Object.keys(opt.dataCustom).includes( idx.toString() ) ){
-                return format(parseISO(value), opt.dataCustom[idx] );
-            }
-            // Se o indice for monetario
-            if(opt?.monetario && opt?.monetario.includes(idx)){
-                return converter(value);
-            }
-            // Se a formatacao for data/hora pode aplicar
-            if(opt?.dataHora && opt?.dataHora.includes(idx) && value?.length > 8){
-                return format(parseISO(value), 'dd/MM/yyyy HH:mm')
-            }
             /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
             if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
                 return opt.envolver[idx](value, row.id, row);
             }
-            // Veja se o campo e um telefone e converta-o
-            if(opt?.telefone && opt.telefone.includes(idx) ){
-                return converterTelefone(value);
-            }
-            // Senao so retorna o valor
-            return value;
+
+            return formatarValores(value, idx, opt);
+
+            // // E o valor padrao quando nao se tem dados
+            // if(value === '--') return value;
+
+            // // Se for o campo data e ele ser esta coluna
+            // if(opt?.data && opt.data?.includes(idx) && value?.length > 7 ){
+            //     return format(parseISO(value), 'dd/MM/yyyy')
+            // }
+            // // Se for o campo dataCustom entao eu devo customizar  com a datastring enviada
+            // if(opt?.dataCustom && Object.keys(opt.dataCustom).includes( idx.toString() ) ){
+            //     return format(parseISO(value), opt.dataCustom[idx] );
+            // }
+            // // Se o indice for monetario
+            // if(opt?.monetario && opt?.monetario.includes(idx)){
+            //     return converter(value);
+            // }
+            // // Se a formatacao for data/hora pode aplicar
+            // if(opt?.dataHora && opt?.dataHora.includes(idx) && value?.length > 8){
+            //     return format(parseISO(value), 'dd/MM/yyyy HH:mm')
+            // }
+            // /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
+            // if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
+            //     return opt.envolver[idx](value, row.id, row);
+            // }
+            // // Veja se o campo e um telefone e converta-o
+            // if(opt?.telefone && opt.telefone.includes(idx) ){
+            //     return converterTelefone(value);
+            // }
+            // // Senao so retorna o valor
+            // return value;
         },
         Footer: ({rows, column})=>{
             
@@ -192,7 +290,9 @@ const Filtro = memo(({ desativarPesquisaLenta, totalRegistros, filtro, setFiltro
 
 const Tabela = (props) => {
   // Extraindo propriedades a serem usadas
-  const { telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
+  const { baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
+  const optTabela = { telefone, dataCustom, soma, data, monetario, envolver };
+
   const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
 
@@ -203,7 +303,7 @@ const Tabela = (props) => {
     // Se o corpo esta sendo atualizado devolva a pagina para 1
     setPagina(1);
   }, [setPagina, corpo]);
-  console.log(pagina);
+  
 
   // Para menu de exibicao para ocultar campos das tabelas
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -277,7 +377,10 @@ const Tabela = (props) => {
   return (
     <>
     <Stack direction='row' justifyContent='space-between' alignItems='flex-end'>
-        {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
+        <Stack alignItems='center' direction='row'>
+            {baixar_em_excel && <BaixarEmExcel optTabela={optTabela} cabe={cabe} corpo={corpo} URL={baixar_em_excel} />}
+            {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
+        </Stack>
         <Stack direction='row'>
         {ocultarColuna && (
                 <Menu 
@@ -415,6 +518,134 @@ const ThCabe  = memo( ({ column, isSorted, isSortedDesc, sxCabecalho })=>(
         </Paper>
     </th>
 ) );
+// Componente que representa o botão para permitir a baixa em excel
+const BaixarEmExcel = memo( ({ cabe, corpo, optTabela, URL })=>{
+    const [intencaoBaixar, setIntencaoBaixar] = useState(null);    
+    const fnFechar = useCallback(()=> setIntencaoBaixar(false), [ setIntencaoBaixar ]);
+    const isMobile = useMediaQuery( useTheme()?.breakpoints?.down('md') );
+
+    return (
+        <>
+        {intencaoBaixar && (
+            isMobile ? (
+                <Drawer
+                    corpo={
+                        <ModalDownloadExcel
+                        cabe={cabe} corpo={corpo}
+                        optTabela={optTabela}
+                        URL={URL}
+                        fnFechar={fnFechar}
+                    
+                    />
+                    }
+                    fecharDrawer={fnFechar}
+                />
+            ) : (
+            <DialogoExibicao
+                fecharDialogo={fnFechar}
+                corpo={
+                <ModalDownloadExcel
+                    cabe={cabe} corpo={corpo}
+                    optTabela={optTabela}
+                    URL={URL}
+                    fnFechar={fnFechar}
+                
+                />}
+            />
+            )
+        )}
+    <IconButton size='small' 
+        disableRipple onClick={()=> setIntencaoBaixar(true)}
+        sx={{borderRadius: '100%', mr: 1, backgroundColor: theme=> theme.palette.primary.main, color: theme=> theme.palette.primary.contrastText }}
+        title='Clique para baixar a planilha em Excel'
+    >
+        <FileDownloadIcon />
+    </IconButton>
+    </>
+    )
+});
+// Modal para escolher as colunas a baixar
+const ModalDownloadExcel = memo( ({ fnFechar, cabe, corpo, optTabela, URL })=>{
+    //
+    const [baixar, setBaixar] = useState(cabe.map( (ele,idx)=> idx) );
+    // Formatar os campos da tabela baseado no conteudo de optTabela
+    const novoCorpo = formatarParaDownload(corpo, optTabela);
+    // Funcao com acionamento do Download para excel
+    const fnBaixar = ()=>{
+        // Pega as colunas selecionadas e fatia o array
+        const _arr = [];
+        novoCorpo.forEach(ele=>{
+            const _arrInterno = [];
+            ele.forEach((item,idx)=>{
+                
+                if(baixar.includes(idx)){
+                    _arrInterno.push(item);
+                }
+            });
+            _arr.push(_arrInterno);
+        });
+
+        baixarEmExcel(URL, cabe, _arr, fnFechar);
+    };
+    // Funcao que marca/desmarca todos
+    const fnMarcarDesmarcar = useCallback((e)=>{
+        if(e.target.checked){
+            setBaixar(cabe.map((ele,idx)=> idx));
+        } else {
+            setBaixar([]);
+        }
+
+    }, [cabe]);
+    // Funcao que marca/desmarca uma coluna
+    const fnMarcarDesmarcarUma = useCallback((e, ele)=>{
+        if(e.target.checked){
+            // Marca a opcao mencionada
+            setBaixar(state=> [...state, ele]);
+        } else {
+            // Retira a opcao mencionada
+            setBaixar(state=>{
+                const copia = state.slice();
+                if(state.includes(ele)){
+                    const idx = copia.indexOf(ele);
+                    if(idx !== -1) copia.splice(idx, 1);
+                }
+                return copia
+            })
+        }        
+    },[]);
+
+    return (
+        <Container maxWidth='sm'>
+            <Stack spacing={1}>
+                <Typography variant='subtitle2' align='center'>
+                    Escolha as colunas que deseja baixar
+                </Typography>
+                <Typography variant='caption' align='center' sx={{opacity: .7}}>
+                    Marque as colunas que deseja retirar do Download do arquivo em Excel. Suas opções ficaram salvas a próxima vez que abrir.
+                </Typography>
+                <FormControlLabel control={<Checkbox onChange={fnMarcarDesmarcar} checked={baixar.length === cabe.length} />}
+                            label='MARCAR/DESMARCAR TODAS COLUNAS'
+                        />
+                    <Divider />
+                <Stack sx={{ maxHeight: '50vh', overflowY: 'auto'}}>
+                    {cabe.map((ele, idx)=>(
+                        <FormControlLabel key={ele} control={<Checkbox onChange={e=> fnMarcarDesmarcarUma(e, idx)} sx={{ml: 1.5}} checked={baixar.includes(idx)} />}
+                            label={ele}
+                        />
+                    ))}
+            </Stack>
+            <Stack direction='row' justifyContent='center'>
+                <Button startIcon={<FileDownloadIcon />} variant='contained' onClick={fnBaixar}>
+                    BAIXAR EM EXCEL
+                </Button>
+            </Stack>
+            </Stack>
+        </Container>
+    )
+    
+
+
+})
 //
 Tabela.propTypes = {
     /** Objeto que representa parametros como passados para a props sx em componentes Mui (pois o cabecalho é um Paper) */
@@ -451,6 +682,10 @@ Tabela.propTypes = {
     calcularRodape: PropTypes.bool.isRequired,
     /** Um boleano que determina se vamos disponibilizar a opcao para ocultar colunas */
     ocultarColuna: PropTypes.bool,
+    /** Uma string que determina se os dados da tabela devem ser enviados para baixa do arquivo em excel */
+    baixar_em_excel: PropTypes.string,
+    /** Define quais colunas devem ser formatadas em percentual */
+    percentual: PropTypes.arrayOf(PropTypes.number)
 }
 //
 Tabela.defaultProps = {

@@ -28,6 +28,7 @@ export const App = () => {
     styleTrSelecionado: { color: 'black', backgroundColor: lightGreen['500'] },
     tamanho: '70vh',
     calcularRodape: true,
+    baixar_em_excel: 'http://localhost:8080/baixar_em_excel'
     
 };
 
