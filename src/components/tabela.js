@@ -1,7 +1,7 @@
 import React, { memo, useState, useMemo, useEffect, useCallback } from 'react'
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import '../css/tabela.css';
+import '../css/tabelav2.css';
 import { useRowSelect, useTable, useSortBy, useGlobalFilter } from 'react-table';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -151,7 +151,7 @@ const Filtro = memo(({ desativarPesquisaLenta, totalRegistros, filtro, setFiltro
    
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
-    const [valor, setValor ] = useState(filtro);
+    const [valor, setValor ] = useState(filtro || '');
     // Utiliza o useDebounce para determinar que depois de 500ms podemos aplicar o filtro
     const [ , ] = useDebounce(
         ()=>{
@@ -203,6 +203,7 @@ const Tabela = (props) => {
     // Se o corpo esta sendo atualizado devolva a pagina para 1
     setPagina(1);
   }, [setPagina, corpo]);
+  console.log(pagina);
 
   // Para menu de exibicao para ocultar campos das tabelas
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -235,27 +236,27 @@ const Tabela = (props) => {
       selectedFlatRows,
       setGlobalFilter
   } = instance;
+
+  // Fatiamento dos registros (PONTO QUE PRECISA DE MELHORIA)
+  const fatiaRegistros = useMemo(()=> (pagina === null) || globalFilter ? rows : rows.slice(0, pagina * 100), [rows, pagina, globalFilter] );
   
   // Se a quantidade de registros for menor que 101 nao
   //
   const [sentryRef, { rootRef }] = useInfiniteScroll({
     //loading: aguardar,
     // Somente ativa o observer do scroll se rows for maior que  100
-    hasNextPage: (rows.length > 100 && pagina && !globalFilter),
+    hasNextPage: (rows.length > 100 && pagina && !globalFilter && corpo.length > fatiaRegistros.length),
     onLoadMore: ()=> {
         setPagina(state=> state + 1);
     },
-    delayInMs: 600, 
+    delayInMs: 400, 
     //disabled: aguardar,       
     // `rootMargin` is passed to `IntersectionObserver`.
     // We can use it to trigger 'onLoadMore' when the sentry comes near to become
     // visible, instead of becoming fully visible on the screen.
     rootMargin: '0px 0px 400px 0px',
   });
-  
-  // Fatiamento dos registros (PONTO QUE PRECISA DE MELHORIA)
-  const fatiaRegistros = useMemo(()=> (pagina === null) || globalFilter ? rows : rows.slice(0, pagina * 100), [rows, pagina, globalFilter] );
-      
+        
   // o useEffect para ver se a quantidade de registros fatiados e igual a quantidade normal
 //   useEffect(()=>{
 //       // Se tiver atingido o limite de registros defina o pagina como null pois não devemos pedir mais registros a tabela
@@ -394,7 +395,7 @@ const Tabela = (props) => {
             
         </table>
         {/* Isto previne que o loading fique aparecendo mesmo em registros menores que 100 */}
-        { pagina && corpo.length > 100 && (
+        { pagina && corpo.length > 100 && !globalFilter && corpo.length > fatiaRegistros.length && (
         <Stack ref={sentryRef} direction='row' justifyContent='center'>
             <CircularProgress size={20}  />             
         </Stack>                        
