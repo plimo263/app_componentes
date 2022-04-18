@@ -574,6 +574,8 @@ const ModalDownloadExcel = memo( ({ fnFechar, cabe, corpo, optTabela, URL })=>{
     const fnBaixar = ()=>{
         // Pega as colunas selecionadas e fatia o array
         const _arr = [];
+        const _copiaCabe = cabe.filter((ele,idx)=> baixar.includes(idx));
+
         novoCorpo.forEach(ele=>{
             const _arrInterno = [];
             ele.forEach((item,idx)=>{
@@ -585,7 +587,7 @@ const ModalDownloadExcel = memo( ({ fnFechar, cabe, corpo, optTabela, URL })=>{
             _arr.push(_arrInterno);
         });
 
-        baixarEmExcel(URL, cabe, _arr, fnFechar);
+        baixarEmExcel(URL, _copiaCabe, _arr, fnFechar);
     };
     // Funcao que marca/desmarca todos
     const fnMarcarDesmarcar = useCallback((e)=>{
