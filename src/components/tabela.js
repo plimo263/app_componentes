@@ -18,7 +18,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import {format, parseISO } from 'date-fns';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
-import { useTheme, useMediaQuery, Divider, Button, Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, Container, FormControlLabel } from '@mui/material';
+import { Hidden, useTheme, useMediaQuery, Divider, Button, Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, Container, FormControlLabel } from '@mui/material';
 
 // Funcao para fazer o download da tabela em Excel
 const baixarEmExcel = async (URL, cabe, corpo, fnFechar)=>{
@@ -245,7 +245,7 @@ function formatarCorpo(corpo){
 }
 
 // Componente para exibir o filtro
-const Filtro = memo(({ desativarPesquisaLenta, totalRegistros, filtro, setFiltro })=>{
+const Filtro = memo(({ isMobile, desativarPesquisaLenta, totalRegistros, filtro, setFiltro })=>{
    
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
@@ -261,12 +261,14 @@ const Filtro = memo(({ desativarPesquisaLenta, totalRegistros, filtro, setFiltro
     );
 
     return (
-        <Stack direction='row-reverse'>       
-            <Stack direction='row' alignItems='center'>
-                <Typography sx={{mx: 1}} variant='body2' fontWeight='bold'>
-                    {`Total: ${totalRegistros}`}
-                </Typography>
-                <TextField size='small'
+        <Stack flex={1} direction='row-reverse'>       
+            <Stack flex={1} direction='row' alignItems='center'>
+                <Hidden mdDown>
+                    <Typography sx={{mx: 1}} variant='body2' fontWeight='bold'>
+                        {`Total: ${totalRegistros}`}
+                    </Typography>
+                </Hidden>
+                <TextField size='small' fullWidth={isMobile}
                     placeholder='Digite o que procura...'
                     label='Filtro' type="search"
                     value={valor} sx={{mb: .5}}
@@ -295,7 +297,7 @@ const Tabela = (props) => {
 
   const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
-
+  
   const columns = useMemo(()=> formatarCabe(cabe, { telefone, dataCustom, soma, data, monetario, envolver }), [ telefone, dataCustom, soma, data, monetario, envolver, cabe ]);
   const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
   // Verifica se o corpo esta sofrendo atualizacao
@@ -303,8 +305,6 @@ const Tabela = (props) => {
     // Se o corpo esta sendo atualizado devolva a pagina para 1
     setPagina(1);
   }, [setPagina, corpo]);
-  
-
   // Para menu de exibicao para ocultar campos das tabelas
   const [anchorEl, setAnchorEl] = React.useState(null);
   const fnExibir = useCallback( (e) => setAnchorEl(e.currentTarget), []);
@@ -330,12 +330,23 @@ const Tabela = (props) => {
       allColumns,
       footerGroups,
       prepareRow,
+      setHiddenColumns,
       toggleAllRowsSelected,
       rows,
       state : { hiddenColumns, globalFilter },
       selectedFlatRows,
       setGlobalFilter
   } = instance;
+
+    // Assim que a tabela e criada veja se tem colunas para serem salvas como ocultas
+    useEffect(()=>{
+        const _localStorage = window?.localStorage?.getItem(`TABELA_OCULTA_COLUNA_${window.location.pathname}`);
+        // Salva a coluna a ser oculta
+        if(_localStorage){
+            setHiddenColumns(JSON.parse(_localStorage));
+        }
+
+    }, [ setHiddenColumns ]);
 
   // Fatiamento dos registros (PONTO QUE PRECISA DE MELHORIA)
   const fatiaRegistros = useMemo(()=> (pagina === null) || globalFilter ? rows : rows.slice(0, pagina * 100), [rows, pagina, globalFilter] );
@@ -356,6 +367,14 @@ const Tabela = (props) => {
     // visible, instead of becoming fully visible on the screen.
     rootMargin: '0px 0px 400px 0px',
   });
+  // UseEffect que vai registrar as colunas ocultas para salvar na pagina
+  useEffect(()=>{
+      const _localStorage = window?.localStorage;
+        // Salva a coluna a ser oculta
+        if(_localStorage){
+            _localStorage.setItem(`TABELA_OCULTA_COLUNA_${window.location.pathname}`, JSON.stringify(hiddenColumns));
+        }
+  }, [hiddenColumns ]);
         
   // o useEffect para ver se a quantidade de registros fatiados e igual a quantidade normal
 //   useEffect(()=>{
@@ -373,15 +392,17 @@ const Tabela = (props) => {
   }
   // Conta a quantidade de colunas ocultas
   const qtdColunaOculta = useMemo(()=> hiddenColumns.filter(ele=> ele !== 'id').length, [hiddenColumns ] );
+  // 
+  const isMobile = useMediaQuery( useTheme()?.breakpoints?.down('md') );
       
   return (
     <>
-    <Stack direction='row' justifyContent='space-between' alignItems='flex-end'>
+    <Stack spacing={.5} direction={{xs: 'column',md: 'row'}} justifyContent='space-between' alignItems={{xs: 'stretch', md: 'flex-end'}}>
         <Stack alignItems='center' direction='row'>
             {baixar_em_excel && <BaixarEmExcel optTabela={optTabela} cabe={cabe} corpo={corpo} URL={baixar_em_excel} />}
             {render ? render({ trSelecionadoDados, trSelecionado }) : <span />}
         </Stack>
-        <Stack direction='row'>
+        <Stack flex={isMobile ? 1 : false} direction='row'>
         {ocultarColuna && (
                 <Menu 
                     anchorEl={anchorEl} 
@@ -426,6 +447,7 @@ const Tabela = (props) => {
                 filtro={globalFilter}
                 setFiltro={setGlobalFilter}
                 totalRegistros={rows?.length}
+                isMobile={isMobile}
             />}
         </Stack>
     </Stack>
