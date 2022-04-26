@@ -19,6 +19,10 @@ import {format, parseISO } from 'date-fns';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
 import { Hidden, useTheme, useMediaQuery, Divider, Button, Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, Container, FormControlLabel } from '@mui/material';
+/**
+ * Versão: 1.1
+ * Data: 26/04/2022
+ */
 
 // Funcao para fazer o download da tabela em Excel
 const baixarEmExcel = async (URL, cabe, corpo, fnFechar)=>{
@@ -292,7 +296,7 @@ const Filtro = memo(({ isMobile, desativarPesquisaLenta, totalRegistros, filtro,
 
 const Tabela = (props) => {
   // Extraindo propriedades a serem usadas
-  const { baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
+  const { styleTD, baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
   const optTabela = { telefone, dataCustom, soma, data, monetario, envolver };
 
   const [ buscaColuna, setBuscaColuna ] = useState('');
@@ -487,9 +491,10 @@ const Tabela = (props) => {
                                     row.toggleRowSelected(!row.isSelected);
                             }} {...row.getRowProps()}>
                                 {
-                                row.cells.map(cell=>{
+                                row.cells.map((cell, idxC)=>{
+                                    
                                     return (
-                                        <td {...cell.getCellProps()}>
+                                        <td {...cell.getCellProps()} style={Object.keys(styleTD).includes(idxC.toString()) ? styleTD[idxC] : {}}>
                                             {cell.render('Cell')}
                                         </td>
                                     )
@@ -719,7 +724,9 @@ Tabela.propTypes = {
     /** Uma string que determina se os dados da tabela devem ser enviados para baixa do arquivo em excel */
     baixar_em_excel: PropTypes.string,
     /** Define quais colunas devem ser formatadas em percentual */
-    percentual: PropTypes.arrayOf(PropTypes.number)
+    percentual: PropTypes.arrayOf(PropTypes.number),
+    /** Define estilizacao para as celulas */
+    styleTD: PropTypes.object,
 }
 //
 Tabela.defaultProps = {
@@ -727,6 +734,7 @@ Tabela.defaultProps = {
     ocultarColuna: false,
     styleCabe: {},
     styleCorpo: {},
+    styleTD: {},
     styleRodape: {},
     sxCabecalho: {borderRadius: 0, color: theme=> theme.palette.primary.contrastText, backgroundColor: theme=> theme.palette.primary.main, m: 0, p: 1},
     tamanho: '60vh',
