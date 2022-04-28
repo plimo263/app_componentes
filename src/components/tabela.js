@@ -20,8 +20,8 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
 import { Hidden, useTheme, useMediaQuery, Divider, Button, Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, Container, FormControlLabel } from '@mui/material';
 /**
- * Versão: 1.1
- * Data: 26/04/2022
+ * Versão: 1.2
+ * Data: 27/04/2022
  */
 
 // Funcao para fazer o download da tabela em Excel
@@ -61,6 +61,7 @@ const baixarEmExcel = async (URL, cabe, corpo, fnFechar)=>{
 const formatarValores = (valor, idx, opt)=>{
         // E o valor padrao quando nao se tem dados
         if(valor === '--') return valor;
+        
 
         // Se for o campo data e ele ser esta coluna
         if(opt?.data && opt.data?.includes(idx) && valor?.length > 7 ){
@@ -79,7 +80,7 @@ const formatarValores = (valor, idx, opt)=>{
             return format(parseISO(valor), 'dd/MM/yyyy HH:mm')
         }
         // Se a formatacao for para percentual
-        if(opt?.percentual && opt.percentual.includes(idx) && valor?.length > 0){
+        if(opt?.percentual && opt.percentual.includes(idx) && valor?.toString().length > 0){
             return percentual(valor);
         }
         
@@ -169,7 +170,7 @@ function formatarCabe(cabe, opt){
             if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
                 return opt.envolver[idx](value, row.id, row);
             }
-
+            
             return formatarValores(value, idx, opt);
 
             // // E o valor padrao quando nao se tem dados
@@ -296,13 +297,13 @@ const Filtro = memo(({ isMobile, desativarPesquisaLenta, totalRegistros, filtro,
 
 const Tabela = (props) => {
   // Extraindo propriedades a serem usadas
-  const { styleTD, baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
-  const optTabela = { telefone, dataCustom, soma, data, monetario, envolver };
-
+  const { percentual, styleTD, baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
+  const optTabela = { percentual, telefone, dataCustom, soma, data, monetario, envolver };
+  
   const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
   
-  const columns = useMemo(()=> formatarCabe(cabe, { telefone, dataCustom, soma, data, monetario, envolver }), [ telefone, dataCustom, soma, data, monetario, envolver, cabe ]);
+  const columns = useMemo(()=> formatarCabe(cabe, { telefone, dataCustom, soma, data, monetario, envolver, percentual }), [ percentual, telefone, dataCustom, soma, data, monetario, envolver, cabe ]);
   const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
   // Verifica se o corpo esta sofrendo atualizacao
   useEffect(()=>{
@@ -320,7 +321,7 @@ const Tabela = (props) => {
   const instance = useTable({
       columns,
       data: registros,
-      initialState: { hiddenColumns: ['id']  }
+      initialState: { hiddenColumns: ['id'],  }
   }, 
       useGlobalFilter,
       useSortBy,
