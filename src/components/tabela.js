@@ -19,9 +19,12 @@ import {format, parseISO } from 'date-fns';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { useDebounce } from 'react-use';
 import { Hidden, useTheme, useMediaQuery, Divider, Button, Badge, Menu, IconButton, Stack, TextField, Paper, CircularProgress, Typography, Checkbox, Container, FormControlLabel } from '@mui/material';
-/**
- * Versão: 1.2
- * Data: 27/04/2022
+/*
+ * Um componente que faz utilização de uma linda tabela, customizavel com recursos como:
+ * - Baixar em Excel
+ * - Conversão de valores monetarios, datas e percentuais
+ * - Estilização usando mui (sx props)
+ * - HOC para registro selecionado com opções sobre tabela
  */
 
 // Funcao para fazer o download da tabela em Excel
