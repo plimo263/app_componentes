@@ -1,21 +1,58 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Hidden, Stack, Button, Grid, TextField, CircularProgress } from '@mui/material';
+import { Checkbox, Hidden, Stack, Button, Grid, TextField, CircularProgress, Switch } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import Select from './select';
 import Icone from './icone';
+import RadioForm from './radio-form';
 import { Caption, Subtitle2 } from './tipografia';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
+// Text, Textarea, number
+const EntradaFormNormal = memo( (props)=>{
+    // Se o componente for do tipo file devemos criar o nosso proprio onchange
+    const onChange = props.type === 'file' ? (evt)=> { return props.propsController.field.onChange(evt.target.files) } : null;
+    // Quando existe onChange retornamos este textField
+    if(onChange){
+        return (
+            <TextField 
+                InputLabelProps={{shrink: true }} 
+                fullWidth={true} 
+                size='small' 
+                {...props} 
+                {...props.propsController}
+                {...props?.extraProps}
+                onChange={onChange}
+                error={!!props.error} 
+                inputProps={{
+                    ...props.extraProps?.inputProps,
+                    maxLength: props.maxLength ? props.maxLength : null,
+                }}
+                InputProps={{
+                    startAdornment: props.icon && <Icone icone={props.icon} />
+                }}
 
-const EntradaFormNormal = memo( (props)=>(
+                helperText={
+                <Stack direction='row-reverse' justifyContent='space-between'>
+                {!!props.error ? <Caption>{props.error}</Caption> : null}
+                {props.maxLength ? <Caption>{props.length} / {props.maxLength}</Caption> : props.counter ? <Caption>{props.length}</Caption> : null}
+                </Stack>        
+                }
+            />
+        )
+    }
+    // Retorna o textfield
+
+    return (
     <TextField 
         InputLabelProps={{shrink: true }} 
         fullWidth={true} 
         size='small' 
         {...props} 
         {...props?.extraProps}
+        
         error={!!props.error} 
         inputProps={{
             ...props.extraProps?.inputProps,
@@ -28,12 +65,15 @@ const EntradaFormNormal = memo( (props)=>(
         helperText={
         <Stack direction='row-reverse' justifyContent='space-between'>
           {!!props.error ? <Caption>{props.error}</Caption> : null}
-          {props.maxLength && <Caption>{props.length} / {props.maxLength}</Caption>}
+          {props.maxLength ? <Caption>{props.length} / {props.maxLength}</Caption> : props.counter ? <Caption>QTD: {props.length}</Caption> : null}
           </Stack>        
         }
     />
+    );
     
-));
+});
+
+// Select
 const EntradaFormSelect = memo( props=>(
     <Stack>
         <Subtitle2 align='left'>
@@ -44,6 +84,38 @@ const EntradaFormSelect = memo( props=>(
         {!!props.error ? <Caption align='left' color='error'>{props.error}</Caption> : null}
     </Stack>
 ));
+// Switch
+const EntradaFormSwitch = memo( props=>(
+    <Stack>
+        <Stack direction='row' alignItems='center'>
+            {props.icon && <Icone icone={props.icon} />} &nbsp;&nbsp;
+            <FormControlLabel  {...props} label={props.label} control={<Switch defaultChecked={props.defaultChecked} />} />
+            </Stack>
+        {!!props.error ? <Caption align='left' color='error'>{props.error}</Caption> : null}
+    </Stack>
+
+));
+// Checkbox
+const EntradaFormCheckbox = memo( props=>(
+    <Stack>
+        <Stack direction='row' alignItems='center'>
+            {props.icon && <Icone icone={props.icon} />} &nbsp;&nbsp;
+            <FormControlLabel  {...props} label={props.label} control={<Checkbox defaultChecked={props.defaultChecked} />} />
+            </Stack>
+        {!!props.error ? <Caption align='left' color='error'>{props.error}</Caption> : null}
+    </Stack>
+
+));
+// Radio
+const EntradaFormRadio = memo(props=>(
+    <Stack>
+        <Subtitle2 align='left'>
+            {props.icon && <Icone icone={props.icon} />}
+            {props.label}
+        </Subtitle2>
+        <RadioForm {...props} />
+    </Stack>
+))
 
 export default function EntradaForm(props) {
     const { wait, schema, onSubmit, schemaMessageError, schemaValidator } = props;
@@ -51,17 +123,17 @@ export default function EntradaForm(props) {
     if(schemaValidator){
         obj['resolver'] = yupResolver(schemaValidator)
     }
-    const { handleSubmit, control, formState: { errors }, watch } = useForm(obj);
+    const {  handleSubmit, control, formState: { errors }, watch } = useForm(obj);
 
   return (
       <>
         <Grid container spacing={1}>
             {schema.map((ele,idx)=>{
-                const { type, grid, name, defaultValue, maxLength } = ele;
+                const { type, grid, name, defaultValue, defaultChecked, counter, maxLength } = ele;
                 const itemGrid = grid ? grid : {xs: 12};
                 //
-                const itemDefaultValue = defaultValue ? defaultValue : '';
-                let length = maxLength ? watch(name)?.length : null;
+                const itemDefaultValue = defaultValue ? defaultValue : defaultChecked ? defaultChecked : '';
+                let length = (maxLength || counter) ? watch(name)?.length : null;
 
                 return (
                     <Grid item {...itemGrid} key={idx}>
@@ -69,21 +141,61 @@ export default function EntradaForm(props) {
                             control={control}
                             name={name}
                             defaultValue={itemDefaultValue}
-                            render={({ field })=>{
+                            render={(propsController)=>{
 
                                 switch(type){
                                     case 'select':
                                         return (
                                             <EntradaFormSelect 
-                                                {...field} {...ele} 
+                                                {...propsController.field} {...ele} 
                                                 options={ele.itens} 
                                                 isDisabled={wait}
                                                 error={!!errors && errors[name] && schemaMessageError[name]}
                                             />
                                         )
+                                    case 'switch':
+                                        return (
+                                            <EntradaFormSwitch 
+                                                {...propsController.field}
+                                                {...ele}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
+                                        )
+                                    case 'checkbox':
+                                        return (
+                                            <EntradaFormCheckbox
+                                                {...propsController.field}
+                                                {...ele}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
+                                        )
+                                    case 'radio':
+                                        return (
+                                            <EntradaFormRadio 
+                                                {...propsController.field}
+                                                {...ele}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                                error={!!errors[name] && schemaMessageError[name]}
+                                                                                            
+                                            />
+                                        )
+                                    case 'file':
+                                        return (
+                                            <EntradaFormNormal 
+                                                propsController={propsController}
+                                                {...ele}
+                                                error={!!errors[name] && schemaMessageError[name]}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
+
+                                        )
                                     default:
                                         return (
-                                        <EntradaFormNormal {...field}
+                                        <EntradaFormNormal {...propsController.field}
                                             {...ele}
                                             error={!!errors[name] && schemaMessageError[name]}
                                             length={length}
@@ -134,9 +246,11 @@ EntradaForm.propTypes = {
             /** Uma string que represente o icone */
             icon: PropTypes.string,
             /** Os tipos dos itens */
-            type: PropTypes.oneOf(['select', 'text', 'textarea', 'number', 'date']).isRequired,
+            type: PropTypes.oneOf(['select', 'text', 'textarea', 'number', 'date', 'checkbox', 'switch', 'file', 'radio']).isRequired,
             /** O valor default do item */
             defaultValue: PropTypes.string,
+            /** Boleano para valor default */
+            defaultChecked: PropTypes.bool,
             /** Nome que vai identificar o campo no formulario */
             name: PropTypes.string.isRequired,
             /** Rótulo para o campo  */
@@ -151,6 +265,8 @@ EntradaForm.propTypes = {
             autoFormat: PropTypes.bool,
             /** Um numero que determina o limite maximo de caracteres digitados */
             maxLength: PropTypes.number,
+            /** Um contador para o campo. Campos que tem maxLength já levam contador automatico */
+            counter: PropTypes.bool,
         })
     ).isRequired,
     /** Um objeto que determina o schema de validação (vide yup para montar o schema) */

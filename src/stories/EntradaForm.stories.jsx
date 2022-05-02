@@ -67,6 +67,174 @@ const ITENS2 = [
   }
 ]
 
+const ITENS3 = [
+  {
+   name: 'titulo',
+   icon: 'PostAdd',
+   type: 'text',
+   label: 'Titulo',
+   defaultValue: '',
+   extraProps: {
+     fullWidth: true
+   },
+   grid: {
+     xs: 12, 
+   },
+  },
+  {
+    type: 'textarea',
+    icon: 'Computer',
+    label: 'Descrição',
+    name: 'descricao',
+    defaultValue: '',
+    placeholder: 'Digite uma descrição válida',
+    extraProps: {
+      multiline: true, minRows: 2,
+      fullWidth: true,
+    },
+    //maxLength: 10,
+    grid: {
+      xs: 12, 
+    }
+  },
+  {
+    type: 'switch',
+    icon: 'Phone',
+    label: 'Receber ligação ?',
+    name: 'ligacao',
+    defaultChecked: true,   
+  }
+]
+//
+const ITENS4 = [
+  {
+   name: 'titulo',
+   icon: 'PostAdd',
+   type: 'text',
+   label: 'Titulo',
+   defaultValue: '',
+   extraProps: {
+     fullWidth: true
+   },
+   grid: {
+     xs: 12, 
+   },
+  },
+  {
+    type: 'textarea',
+    icon: 'Computer',
+    label: 'Descrição',
+    name: 'descricao',
+    defaultValue: '',
+    placeholder: 'Digite uma descrição válida',
+    extraProps: {
+      multiline: true, minRows: 2,
+      fullWidth: true,
+    },
+    //maxLength: 10,
+    grid: {
+      xs: 12, 
+    }
+  },
+  {
+    name: 'lojas',
+    type: 'radio',
+    orientation: 'horizontal',
+    itens: [[ 1, 'Diniz Minas Shopping'], [2, 'Diniz Contagem']],    
+    label: 'Qual a loja preferida',
+    defaultValue : "2"
+  }
+]
+//
+const ITENS5 = [
+  {
+   name: 'titulo',
+   icon: 'PostAdd',
+   type: 'text',
+   label: 'Titulo',
+   defaultValue: '',
+   extraProps: {
+     fullWidth: true
+   },
+   grid: {
+     xs: 12, 
+   },
+  },
+  {
+    type: 'textarea',
+    icon: 'Computer',
+    label: 'Descrição',
+    name: 'descricao',
+    defaultValue: '',
+    placeholder: 'Digite uma descrição válida',
+    extraProps: {
+      multiline: true, minRows: 2,
+      fullWidth: true,
+    },
+    //maxLength: 10,
+    grid: {
+      xs: 12, 
+    }
+  },
+  {
+    name: 'arquivo',
+    type: 'file',
+    label: 'Foto',
+  }
+]
+
+const ITENS6 = [
+  {
+   name: 'titulo',
+   icon: 'PostAdd',
+   type: 'text',
+   label: 'Titulo',
+   defaultValue: '',
+   extraProps: {
+     fullWidth: true
+   },
+   grid: {
+     xs: 12, 
+   },
+  },
+  {
+    type: 'textarea',
+    counter: true,
+    label: 'Descrição',
+    name: 'descricao',
+    defaultValue: '',
+    placeholder: 'Digite uma descrição válida',
+    extraProps: {
+      multiline: true, minRows: 2,
+      fullWidth: true,
+    },
+    //maxLength: 10,
+    grid: {
+      xs: 12, 
+    }
+  },
+    {
+      type: 'checkbox',
+      label: 'Manter conectado',
+      name: 'conectado',
+      defaultChecked: true,   
+      grid: {
+        xs: 2,
+      }
+    },
+    {
+      type: 'date',
+      label: 'Data entrada',
+      name: 'data',
+      grid: {
+        xs: 10,
+      },
+      extraProps: {
+        fullWidth: false
+      }
+    }
+]
+
 export default {
   title: 'Example/EntradaForm',
   component: EntradaForm,
@@ -86,6 +254,7 @@ export default {
         <li>{`itens: Um array para o select determinar os itens que farão parte do select`}</li>
         <li>{`autoFormat: Propriedade do select para autoFormataçao do campo itens e defaultValue`}</li>
         <li>{`maxLength: Um numero que determina o limite maximo de caracteres digitados`}</li>
+        <li>{`counter: Um boleano que ativa o contador de caracteres no campo`}</li>
       </ul>
     </div>
 }
@@ -167,6 +336,79 @@ Aguardar.story = {
     parameters: {
       docs: {
           storyDescription: 'Com o valor que desativa todos os campos (geralmente repassado quando um formulario e submetido).'
+      }
+  }
+}
+
+
+export const Switch = Template.bind({});
+
+Switch.args = {
+  schema: ITENS3,  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+Switch.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulário com botão switch.'
+      }
+  }
+}
+
+export const Radio = Template.bind({});
+
+Radio.args = {
+  schema: ITENS4,  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+Radio.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulário com sistema de radio'
+      }
+  }
+}
+
+export const Arquivo = Template.bind({});
+
+Arquivo.args = {
+  schema: ITENS5,  
+  onSubmit: (val)=>{
+    console.log(val);
+  }
+}
+
+
+Arquivo.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulário com sistema de upload de arquivos'
+      }
+  }
+}
+
+export const CheckBox = Template.bind({});
+
+CheckBox.args = {
+  schema: ITENS6,  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+CheckBox.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulário com checkbox ativo.'
       }
   }
 }
