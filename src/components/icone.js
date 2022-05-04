@@ -31,6 +31,13 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import MenuIcon from '@mui/icons-material/Menu';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import AddIcon from '@mui/icons-material/Add';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FeedIcon from '@mui/icons-material/Feed';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 
 
 const Icone = (props) => {
@@ -97,7 +104,20 @@ const Icone = (props) => {
             return <PostAddIcon {...props} />;
         case 'Add':
             return <AddIcon {...props} />;
-
+        case 'MoreVert':
+            return <MoreVertIcon {...props} />;
+        case 'Edit':
+            return <EditIcon {...props} />;
+        case 'Delete':
+            return <DeleteIcon {...props} />;
+        case 'Feed':
+            return <FeedIcon {...props} />;
+        case 'WhatsApp':
+            return <WhatsAppIcon {...props} />;
+        case 'CalendarMonth':
+            return <CalendarMonthIcon {...props} />;
+        case 'CameraAlt':
+            return <CameraAltIcon {...props} />;
         default:
             return '';
     }
@@ -109,7 +129,8 @@ const TIPO_ICONES = [
     'AllInbox', 'AirlineSeatReclineNormal', 'FileDownload', 'ThumbDown',
     'ThumbUp', 'Comment', 'Search', 'PersonSearch', 'AddComment',
     'FindReplace', 'Send', 'Save', 'Announcement', 'FilterAlt', 'ListAlt',
-    'FormatListBulleted', 'ShoppingCart', 'ManageHistory'
+    'FormatListBulleted', 'ShoppingCart', 'ManageHistory', 'MoreVert', 'Edit', 
+    'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt'
 ];
 
 Icone.propTypes = {

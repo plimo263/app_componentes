@@ -18,7 +18,8 @@ const TIPO_ICONES = [
     'AllInbox', 'AirlineSeatReclineNormal', 'FileDownload', 'ThumbDown',
     'ThumbUp', 'Comment', 'Search', 'PersonSearch', 'AddComment',
     'FindReplace', 'Send', 'Save', 'Announcement', 'FilterAlt', 'ListAlt',
-    'FormatListBulleted', 'ShoppingCart', 'ManageHistory'
+    'FormatListBulleted', 'ShoppingCart', 'ManageHistory', 'MoreVert', 'Edit', 
+    'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt'
 ];
 
 BotaoIcone.propTypes = {
