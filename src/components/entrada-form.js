@@ -127,7 +127,7 @@ export default function EntradaForm(props) {
 
   return (
       <>
-        <Grid container spacing={1}>
+        <Grid container>
             {schema.map((ele,idx)=>{
                 const { type, grid, name, defaultValue, defaultChecked, counter, maxLength } = ele;
                 const itemGrid = grid ? grid : {xs: 12};
@@ -136,7 +136,7 @@ export default function EntradaForm(props) {
                 let length = (maxLength || counter) ? watch(name)?.length : null;
 
                 return (
-                    <Grid item {...itemGrid} key={idx}>
+                    <Grid sx={{p: .5}} item {...itemGrid} key={idx}>
                         <Controller 
                             control={control}
                             name={name}
