@@ -7,14 +7,14 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { Caption } from './tipografia';
 
 export default function RadioForm(props) {
-    const { itens, orientation, error, disabled, defaultValue } = props;
+    const { itens, orientation, error, disabled, defaultValue, size } = props;
   return (
       <Stack>
       <RadioGroup  defaultValue={defaultValue} {...props} row={orientation && orientation === 'horizontal'}>
           {itens.map((ele,idx)=>(
-              <FormControlLabel key={idx} 
+              <FormControlLabel key={idx}
                 value={Array.isArray(ele) ? ele[0] : ele} 
-                control={<Radio />}
+                control={<Radio size={size} />}
                 label={Array.isArray(ele) ? ele[1] : ele}
                 disabled={disabled}
             />
@@ -23,6 +23,10 @@ export default function RadioForm(props) {
       {error && <Caption color='error' align='left'>{error}</Caption>}
       </Stack>
   )
+}
+
+RadioForm.defaultProps = {
+    size: 'medium',
 }
 
 RadioForm.propTypes = {
@@ -36,4 +40,6 @@ RadioForm.propTypes = {
     orientation: PropTypes.oneOf(['vertical', 'horizontal']),
     /** Desabilita o radiogroup para não se escolher mais opções */
     disabled: PropTypes.bool,
+    /** Controla o tamanho do botao de radio */
+    size: PropTypes.oneOf(['small', 'medium', 'large'])
 }

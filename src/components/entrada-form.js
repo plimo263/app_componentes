@@ -113,7 +113,7 @@ const EntradaFormRadio = memo(props=>(
             {props.icon && <Icone icone={props.icon} />}
             {props.label}
         </Subtitle2>
-        <RadioForm {...props} />
+        <RadioForm {...props} size={props.size || 'medium'} />
     </Stack>
 ))
 
@@ -267,6 +267,8 @@ EntradaForm.propTypes = {
             maxLength: PropTypes.number,
             /** Um contador para o campo. Campos que tem maxLength já levam contador automatico */
             counter: PropTypes.bool,
+            /** Um parametro para controlaro tamanho do item em radioForm */
+            size: PropTypes.oneOf(['small', 'medium', 'large']),
         })
     ).isRequired,
     /** Um objeto que determina o schema de validação (vide yup para montar o schema) */

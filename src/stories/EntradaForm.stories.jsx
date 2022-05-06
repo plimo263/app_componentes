@@ -247,6 +247,7 @@ export default {
         <li>{`icon: Uma string que represente o icone `}</li>
         <li>{`type: Os tipos dos itens aceitos `}</li>
         <li>{`defaultValue: O valor default do item  `}</li>
+        <li>{`defaultChecked: Um valor booleano para passar valor default do item.  `}</li>
         <li>{`name: Nome que vai identificar o campo no formulario`}</li>
         <li>{`label: Rótulo para o campo`}</li>
         <li>{`grid: Sistema de grid para distribuir campos de formulario ({xs: 12, md: 6 })`}</li>
