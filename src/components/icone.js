@@ -38,6 +38,25 @@ import FeedIcon from '@mui/icons-material/Feed';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import LinkIcon from '@mui/icons-material/Link';
+import EmailIcon from '@mui/icons-material/Email';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import GroupsIcon from '@mui/icons-material/Groups';
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import TableViewIcon from '@mui/icons-material/TableView';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
+import HomeIcon from '@mui/icons-material/Home';
+import HandshakeIcon from '@mui/icons-material/Handshake';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import QrCodeIcon from '@mui/icons-material/QrCode';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import PercentIcon from '@mui/icons-material/Percent';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
+import CheckIcon from '@mui/icons-material/Check';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 
 
 const Icone = (props) => {
@@ -118,6 +137,45 @@ const Icone = (props) => {
             return <CalendarMonthIcon {...props} />;
         case 'CameraAlt':
             return <CameraAltIcon {...props} />;
+        case 'Link':
+            return <LinkIcon {...props} />;
+        case 'Email':
+            return <EmailIcon {...props} />;
+        case 'CreditCard':
+            return <CreditCardIcon {...props} />;
+        case 'Groups':
+            return <GroupsIcon {...props} />;
+        case 'SelfImprovement':
+            return <SelfImprovementIcon {...props} />
+        case 'TableView':
+            return <TableViewIcon {...props} />;
+        case 'ArrowBackIos':
+            return <ArrowBackIosIcon {...props} />;
+        case 'EmojiPeople':
+            return <EmojiPeopleIcon {...props} />;
+        case 'Home':
+            return <HomeIcon {...props} />;
+        case 'Handshake':
+            return <HandshakeIcon {...props} />;
+        case 'ShoppingBag':
+            return <ShoppingBagIcon {...props} />;
+        case 'QrCode':
+            return <QrCodeIcon {...props} />;
+        case 'AttachMoney':
+            return <AttachMoneyIcon {...props} />;
+        case 'Receipt':
+            return <ReceiptIcon {...props} />;
+        case 'Percent':
+            return <PercentIcon {...props} />;
+        case 'SwapVert':
+            return <SwapVertIcon {...props} />;
+        case 'Check':
+            return <CheckIcon {...props} />;
+        case 'AutoGraph':
+            return <AutoGraphIcon {...props} />;        
+        case 'PointOfSale':
+            return <PointOfSaleIcon {...props} />;    
+        
         default:
             return '';
     }
@@ -130,7 +188,10 @@ const TIPO_ICONES = [
     'ThumbUp', 'Comment', 'Search', 'PersonSearch', 'AddComment',
     'FindReplace', 'Send', 'Save', 'Announcement', 'FilterAlt', 'ListAlt',
     'FormatListBulleted', 'ShoppingCart', 'ManageHistory', 'MoreVert', 'Edit', 
-    'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt'
+    'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt', 'Link', 'Email', 'CreditCard', 'Groups',
+    'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
+    'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
+    'PointOfSale'
 ];
 
 Icone.propTypes = {
