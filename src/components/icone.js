@@ -57,6 +57,11 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import CheckIcon from '@mui/icons-material/Check';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import CopyrightIcon from '@mui/icons-material/Copyright';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+
 
 
 const Icone = (props) => {
@@ -175,6 +180,15 @@ const Icone = (props) => {
             return <AutoGraphIcon {...props} />;        
         case 'PointOfSale':
             return <PointOfSaleIcon {...props} />;    
+        case 'Copyright':
+            return <CopyrightIcon {...props} />;
+        case 'HighlightOff':
+            return <HighlightOffIcon {...props} />;
+        case 'BarChart':
+            return <BarChartIcon {...props} />;
+        case 'ShowChart':
+            return <ShowChartIcon {...props} />;
+    
         
         default:
             return '';
@@ -191,7 +205,7 @@ const TIPO_ICONES = [
     'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt', 'Link', 'Email', 'CreditCard', 'Groups',
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
-    'PointOfSale'
+    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 
 ];
 
 Icone.propTypes = {
