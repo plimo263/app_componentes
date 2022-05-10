@@ -61,7 +61,8 @@ import CopyrightIcon from '@mui/icons-material/Copyright';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-
+import RuleIcon from '@mui/icons-material/Rule';
+import PersonIcon from '@mui/icons-material/Person';
 
 
 const Icone = (props) => {
@@ -188,8 +189,11 @@ const Icone = (props) => {
             return <BarChartIcon {...props} />;
         case 'ShowChart':
             return <ShowChartIcon {...props} />;
-    
-        
+        case 'Rule':
+            return <RuleIcon {...props} />;
+        case 'Person':
+            return <PersonIcon {...props} />;
+                
         default:
             return '';
     }
@@ -205,7 +209,7 @@ const TIPO_ICONES = [
     'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt', 'Link', 'Email', 'CreditCard', 'Groups',
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
-    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 
+    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person',
 ];
 
 Icone.propTypes = {
