@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { addDays, subDays, eachDayOfInterval, startOfMonth, endOfMonth, getDay, subMonths, addMonths, parseISO, format } from 'date-fns';
@@ -20,8 +20,9 @@ const nomeDias = [
   'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'
 ]
 
+const diaDehoje = format(new Date(), 'yyyy-MM-dd');
 
-export default function Calendario({ sxCabe, sxCorpo, dataInicial, render, renderEstiloDia, onClick }) {
+const Calendario = ({ sxCabe, sxCorpo, dataInicial, render, renderEstiloDia, onClick })=> {
   const [mesAtual, setMesAtual ] = useState(dataInicial);
   const { recuarMes, avancarMes, diasCalendario, ultimosDiasMesAnterior, primeirosDiasMesPosterior } = gerarDiasCalendario(mesAtual);
   // Veja se é mobile
@@ -46,17 +47,23 @@ export default function Calendario({ sxCabe, sxCorpo, dataInicial, render, rende
         </Button>
 
       </Stack>
-    <Stack direction='row'>
-      {nomeDias.map((ele,idx)=>(
-        <Paper key={idx} sx={{...sxCol, ...sxCabe}}>
-          <H6> {isMobile ? ele.substring(0, 1) : ele} </H6>
-        </Paper>
-      ))}
+      <Stack direction='row'>
+        {nomeDias.map((ele,idx)=>(
+          <CalendarioHeader key={idx} 
+            isMobile={isMobile}
+            ele={ele}
+            sxCol={sxCol}
+            sxCabe={sxCabe}
+
+          />
+        ))}
       </Stack>
       <Stack direction='row' flexWrap='wrap'>
       {diasCalendario?.map((ele,idx)=>{
         const diaFormatado = format(ele, 'yyyy-MM-dd');
         const diaNumero = format(ele, 'dd');
+        // Veja se o dia é o dia de hoje
+        const isHoje = diaDehoje === diaFormatado;
         // Verifica se o dia em questão faz parte dos dias que devem ser "desabilitados"
         const desabilitar = primeirosDiasMesPosterior?.includes(ele) || ultimosDiasMesAnterior?.includes(ele);
         const sxEstiloDia = renderEstiloDia ? renderEstiloDia(diaFormatado) : {};
@@ -64,7 +71,7 @@ export default function Calendario({ sxCabe, sxCorpo, dataInicial, render, rende
         return (
         <Paper onClick={()=> !desabilitar && onClick(diaFormatado) } key={idx} sx={{...sxCol, ...sxCorpo, ...sxEstiloDia }}>
           <Stack alignItems='flex-start' spacing={1}>
-              <Caption color={desabilitar ? 'text.disabled' : ''}>{diaNumero}</Caption>
+              <Caption fontWeight={isHoje ? 'bold' : 'normal'} color={isHoje ? 'primary.main' : desabilitar ? 'text.disabled' : ''}>{diaNumero}</Caption>
               {render && render(diaFormatado)}
           </Stack>
         </Paper>
@@ -74,6 +81,13 @@ export default function Calendario({ sxCabe, sxCorpo, dataInicial, render, rende
     </Container>
   )
 }
+// Cabecalho do calendario
+const CalendarioHeader = memo(({ isMobile, ele, sxCol, sxCabe })=>(
+  <Paper sx={{...sxCol, ...sxCabe}}>
+    <H6> {isMobile ? ele.substring(0, 1) : ele} </H6>
+  </Paper>
+))
+
 Calendario.defaultProps = {
   sxCabe: {
     backgroundColor: theme=> theme.palette.secondary.main,
@@ -147,3 +161,5 @@ const gerarDiasCalendario = (anoMesDia)=>{
     }
     
 }
+//
+export default Calendario

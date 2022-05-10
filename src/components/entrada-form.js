@@ -246,7 +246,7 @@ EntradaForm.propTypes = {
             /** Uma string que represente o icone */
             icon: PropTypes.string,
             /** Os tipos dos itens */
-            type: PropTypes.oneOf(['select', 'text', 'textarea', 'number', 'date', 'checkbox', 'switch', 'file', 'radio']).isRequired,
+            type: PropTypes.oneOf(['time', 'select', 'text', 'textarea', 'number', 'date', 'checkbox', 'switch', 'file', 'radio']).isRequired,
             /** O valor default do item */
             defaultValue: PropTypes.string,
             /** Boleano para valor default */

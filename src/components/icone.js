@@ -63,6 +63,9 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import RuleIcon from '@mui/icons-material/Rule';
 import PersonIcon from '@mui/icons-material/Person';
+import SchoolIcon from '@mui/icons-material/School';
+import CakeIcon from '@mui/icons-material/Cake';
+import CelebrationIcon from '@mui/icons-material/Celebration';
 
 
 const Icone = (props) => {
@@ -193,6 +196,12 @@ const Icone = (props) => {
             return <RuleIcon {...props} />;
         case 'Person':
             return <PersonIcon {...props} />;
+        case 'School':
+            return <SchoolIcon {...props} />;
+        case 'Cake':
+            return <CakeIcon {...props} />;
+        case 'Celebration':
+            return <CelebrationIcon {...props} />;
                 
         default:
             return '';
@@ -209,7 +218,7 @@ const TIPO_ICONES = [
     'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt', 'Link', 'Email', 'CreditCard', 'Groups',
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
-    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person',
+    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake',
 ];
 
 Icone.propTypes = {
