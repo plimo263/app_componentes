@@ -87,3 +87,35 @@ OnClick.story = {
     }
   }
 }
+
+export const ControleCalendario = Template.bind({});
+
+ControleCalendario.args = {
+  dataInicial: '2022-05-01',
+  onControleCalendario: (priDia, ultDia, controle)=>{
+    alert(`Você clicou no controle ${controle} primerio dia ${priDia} e ultimo dia ${ultDia} deste mês`)
+  }
+}
+
+ControleCalendario.story = {
+  parameters: {
+    docs: {
+        storyDescription: 'Calendario com função de controle sobre o avanço e recuo do calendario. Com isto é possível determinar quando o calendario avançou ou recuou e executar algum tipo de função auxiliar.'
+    }
+  }
+}
+
+export const ComAguardo = Template.bind({});
+
+ComAguardo.args = {
+  dataInicial: '2022-05-01',
+  aguardar: true,
+}
+
+ComAguardo.story = {
+  parameters: {
+    docs: {
+        storyDescription: 'Calendario com props aguardar o que impede de interagir com qualquer parte do calendario.'
+    }
+  }
+}

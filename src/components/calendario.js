@@ -2,7 +2,7 @@ import React, { memo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { addDays, subDays, eachDayOfInterval, startOfMonth, endOfMonth, getDay, subMonths, addMonths, parseISO, format } from 'date-fns';
-import { Button, useMediaQuery, useTheme, Stack, Paper, Container } from '@mui/material';
+import { Button, useMediaQuery, useTheme, Stack, Paper, Container, CircularProgress } from '@mui/material';
 import { H6, Caption } from './tipografia';
 // Icones
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -22,27 +22,41 @@ const nomeDias = [
 
 const diaDehoje = format(new Date(), 'yyyy-MM-dd');
 
-const Calendario = ({ sxCabe, sxCorpo, dataInicial, render, renderEstiloDia, onClick })=> {
+const Calendario = ({ aguardar, onControleCalendario, sxCabe, sxCorpo, dataInicial, render, renderEstiloDia, onClick })=> {
   const [mesAtual, setMesAtual ] = useState(dataInicial);
   const { recuarMes, avancarMes, diasCalendario, ultimosDiasMesAnterior, primeirosDiasMesPosterior } = gerarDiasCalendario(mesAtual);
   // Veja se é mobile
   const isMobile = useMediaQuery( useTheme()?.breakpoints?.down('md') );
   // Alterando para o proximo (ou anterior) mês
   const fnRecuar = useCallback(()=>{
-    setMesAtual(recuarMes);
-  }, [recuarMes]);
+    // Formata para pegar  o primeiro e ultimo dia do mes posterior
+    if(onControleCalendario){
+      const priDia = format(startOfMonth(parseISO(recuarMes)), 'yyyy-MM-dd');
+      const ultDia = format(endOfMonth(parseISO(recuarMes)), 'yyyy-MM-dd');
+      onControleCalendario(priDia, ultDia, 'recuar');
+    }
+    
+    setMesAtual(recuarMes); // primeiro dia do mes anterior
+  }, [recuarMes, onControleCalendario]);
   const fnAvancar = useCallback(()=>{
-    setMesAtual(avancarMes);
-  }, [avancarMes])
+    // Formata para pegar  o primeiro e ultimo dia do mes posterior
+    if(onControleCalendario){
+      const priDia = format(startOfMonth(parseISO(avancarMes)), 'yyyy-MM-dd');
+      const ultDia = format(endOfMonth(parseISO(avancarMes)), 'yyyy-MM-dd');
+      onControleCalendario(priDia, ultDia, 'avancar');
+    }
+    //
+    setMesAtual(avancarMes); // primeiro dia do mes posterior
+  }, [avancarMes, onControleCalendario])
   
   return (
     <Container disableGutters maxWidth='lg'>
       <Stack direction='row' justifyContent='space-between'>
-        <Button onClick={fnRecuar} title='Mês anterior' startIcon={<ArrowBackIosIcon />}>
+        <Button disabled={aguardar} onClick={fnRecuar} title='Mês anterior' startIcon={aguardar ? <CircularProgress size={20} /> : <ArrowBackIosIcon />}>
          {!isMobile && 'Recuar'}
         </Button>
         <H6>{_.capitalize( format(parseISO(mesAtual), 'MMMM', { locale: ptBR })) } - {format(parseISO(mesAtual), 'yyyy', { locale: ptBR })}</H6>
-        <Button onClick={fnAvancar} title='Próximo mês' endIcon={<ArrowForwardIosIcon />}>
+        <Button disabled={aguardar} onClick={fnAvancar} title='Próximo mês' endIcon={aguardar ? <CircularProgress size={20} /> : <ArrowForwardIosIcon />}>
           {!isMobile && 'Avançar'}
         </Button>
 
@@ -69,9 +83,9 @@ const Calendario = ({ sxCabe, sxCorpo, dataInicial, render, renderEstiloDia, onC
         const sxEstiloDia = renderEstiloDia ? renderEstiloDia(diaFormatado) : {};
         
         return (
-        <Paper onClick={()=> !desabilitar && onClick(diaFormatado) } key={idx} sx={{...sxCol, ...sxCorpo, ...sxEstiloDia }}>
+        <Paper onClick={()=> !desabilitar && !aguardar && onClick(diaFormatado) } key={idx} sx={{...sxCol, ...sxCorpo, ...sxEstiloDia }}>
           <Stack alignItems='flex-start' spacing={1}>
-              <Caption fontWeight={isHoje ? 'bold' : 'normal'} color={isHoje ? 'primary.main' : desabilitar ? 'text.disabled' : ''}>{diaNumero}</Caption>
+              <Caption title='Hoje' sx={{ typography : isHoje ? 'h6' : 'caption' }} fontWeight={isHoje ? 'bold' : 'normal'} color={isHoje ? 'primary.main' : desabilitar ? 'text.disabled' : ''}>{diaNumero}</Caption>
               {render && render(diaFormatado)}
           </Stack>
         </Paper>
@@ -112,6 +126,10 @@ Calendario.propTypes = {
   render: PropTypes.func,
   /** Uma função de callback que você pode passar e retornar um objeto (props sx) para estilizar o campo do dia selecionado, sua responsabilidade garantir um retorno de objeto (mesmo que seja vazio {}) */
   renderEstiloDia: PropTypes.func,
+  /** Uma funcao de callback que é acionada para controlar os avanços/recuos do calendário. Ele recebe primeiro e ultimo dia do mês e qual controle foi acionado. EX: (2022-04-01, 2022-04-30, 'recuar') => {} */
+  onControleCalendario: PropTypes.func,
+  /** Uma props que trava qualquer interatividade do calendario quando ativa */
+  aguardar: PropTypes.bool,
 
 }
 
