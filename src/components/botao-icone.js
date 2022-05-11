@@ -22,7 +22,8 @@ const TIPO_ICONES = [
     'Delete', 'Feed', 'WhatsApp', 'CalendarMonth', 'CameraAlt', 'Link', 'Email', 'CreditCard', 'Groups',
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
-    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake',
+    'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
+    'EventBusy',
 ];
 
 BotaoIcone.propTypes = {
