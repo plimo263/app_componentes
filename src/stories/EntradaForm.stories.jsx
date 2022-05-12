@@ -234,6 +234,73 @@ const ITENS6 = [
       }
     }
 ]
+// Estrutura de itens a serem retornados
+const OBJ_ITENS = {
+  1: [
+    ['Fabio', 'Fabio de melo'],
+    ['Henrique', 'Henrique de castro']
+  ], 
+  2: [
+    ['Monique', 'Monique Resende'],
+    ['Fabiana', 'Fabiana de Almeida']
+  ]
+};
+
+//
+const ITENS7 = [
+  {
+   name: 'titulo',
+   icon: 'PostAdd',
+   type: 'text',
+   label: 'Titulo',
+   defaultValue: '',
+   extraProps: {
+     fullWidth: true
+   },
+   grid: {
+     xs: 12, 
+   },
+  },
+  {
+    type: 'textarea',
+    icon: 'Computer',
+    label: 'Descrição',
+    name: 'descricao',
+    defaultValue: '',
+    placeholder: 'Digite uma descrição válida',
+    extraProps: {
+      multiline: true, minRows: 2,
+      fullWidth: true,
+    },
+    //maxLength: 10,
+    grid: {
+      xs: 12, 
+    }
+  },
+  {
+    name: 'lojas',
+    type: 'select',
+    autoFormat: true,
+    itens: [[ 1, 'Diniz Minas Shopping'], [2, 'Diniz Contagem']],    
+    label: 'Escolha a loja',
+    defaultValue : ""
+  },
+  {
+    name: 'colaboradores',
+    type: 'select',
+    autoFormat: true,
+    exibirSe: {'lojas': (selecionado) =>{
+      const { value } = selecionado;
+      
+      return OBJ_ITENS[value];
+      if(!Object.keys(OBJ_ITENS).includes(value)) return [];
+      return OBJ_ITENS[value];
+    }},
+    itens: [],    
+    label: 'Escolha o colaborador',
+    defaultValue : ""
+  }
+]
 
 export default {
   title: 'Example/EntradaForm',
@@ -410,6 +477,24 @@ CheckBox.story = {
     parameters: {
       docs: {
           storyDescription: 'Formulário com checkbox ativo.'
+      }
+  }
+}
+
+export const ExibirSe = Template.bind({});
+
+ExibirSe.args = {
+  schema: ITENS7,  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+ExibirSe.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulário que exibe um campo se o outro já tiver valor preenchido'
       }
   }
 }

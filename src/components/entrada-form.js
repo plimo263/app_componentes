@@ -123,7 +123,7 @@ export default function EntradaForm(props) {
     if(schemaValidator){
         obj['resolver'] = yupResolver(schemaValidator)
     }
-    const {  handleSubmit, control, formState: { errors }, watch } = useForm(obj);
+    const {  handleSubmit, setValue, control, formState: { isSubmitSuccessful, errors }, watch } = useForm(obj);
 
   return (
       <>
@@ -132,11 +132,38 @@ export default function EntradaForm(props) {
                 const { type, grid, name, defaultValue, defaultChecked, counter, maxLength } = ele;
                 const itemGrid = grid ? grid : {xs: 12};
                 //
-                const itemDefaultValue = defaultValue ? defaultValue : defaultChecked ? defaultChecked : '';
+                let itemDefaultValue = defaultValue ? defaultValue : defaultChecked ? defaultChecked : '';
                 let length = (maxLength || counter) ? watch(name)?.length : null;
+                // Se tiver a props exibirSe, precisamos verificar o valor
+                const chaveExibir = ele.exibirSe ? Object.keys(ele.exibirSe)[0] : null;
+                // Opcao que oculta/exibe o campo do formulario
+                let exibirCampoPorPadrao = chaveExibir ? false : true;
+                console.log(chaveExibir && watch( chaveExibir ));
+                if(chaveExibir && watch( chaveExibir )  ){
+                    
+                    // Executa a funcao de callback repassada para exibirSe passando o valor e esperando o retorno
+                    const opcoes = ele.exibirSe[chaveExibir]( watch( chaveExibir ) );
+                    // Agora verifica o tipo para determinar o objeto que sofrera alteracao
+                    switch(type){
+                        case 'select':
+                        case 'radio':
+                            ele.itens = opcoes;
+                            break;
+                        default: // Eles nao tem opcoes so esperam o valor default
+                            itemDefaultValue = opcoes;
+                            break;
+                        
+                    }
+                    // Se o defaultValue deste campo existir nao limpa
+                    setValue(name, ''); // Limpando o valor default
+                    
+                    
+                    exibirCampoPorPadrao = true;
+
+                }
 
                 return (
-                    <Grid sx={{p: .5}} item {...itemGrid} key={idx}>
+                    <Grid sx={{p: .5, display: exibirCampoPorPadrao ? 'block' : 'none' }} item {...itemGrid} key={idx}>
                         <Controller 
                             control={control}
                             name={name}
