@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Checkbox, Hidden, Stack, Button, Grid, TextField, CircularProgress, Switch } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import MaskedInput from 'react-text-mask';
+import { createNumberMask } from 'text-mask-addons';
 
 import Select from './select';
 import Icone from './icone';
@@ -10,8 +12,23 @@ import RadioForm from './radio-form';
 import { Caption, Subtitle2 } from './tipografia';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
+
 // Text, Textarea, number
 const EntradaFormNormal = memo( (props)=>{
+    let maskToMoney;
+    if(props.toMoney){
+        // Criando mascara monetaria
+        maskToMoney = createNumberMask({
+            prefix: ' ',
+            thousandsSeparatorSymbol: '.',
+            allowDecimal: true,
+            decimalSymbol: ',',
+            decimalLimit: 2,
+            integerLimit: 6,
+            ...props.toMoney,
+        });
+    }
+    
     // Se o componente for do tipo file devemos criar o nosso proprio onchange
     const onChange = props.type === 'file' ? (evt)=> { return props.propsController.field.onChange(evt.target.files) } : null;
     // Quando existe onChange retornamos este textField
@@ -42,6 +59,44 @@ const EntradaFormNormal = memo( (props)=>{
                 }
             />
         )
+    }
+    // Se tiver o maskToMoney devemos envolver o retorno em um maskedInput para formatacao
+    if(maskToMoney || props.mask){
+        return (
+            <MaskedInput 
+                mask={maskToMoney || props.mask} 
+                guide={false}
+                {...props} 
+                inputMode='numeric'
+                render={(ref, props)=>(
+                    <TextField      
+                    InputLabelProps={{shrink: true }} 
+                    fullWidth
+                    inputRef={ref}
+                    size='small' 
+                    {...props} 
+                    {...props?.extraProps}
+                    
+                    error={!!props.error} 
+                    inputProps={{
+                        ...props.extraProps?.inputProps,
+                        maxLength: props.maxLength ? props.maxLength : null,
+                    }}
+                    InputProps={{
+                        startAdornment: props.icon && <Icone icone={props.icon} />
+                    }}
+            
+                    helperText={
+                    <Stack direction='row-reverse' justifyContent='space-between'>
+                      {!!props.error ? <Caption>{props.error}</Caption> : null}
+                      {props.maxLength ? <Caption>{props.length} / {props.maxLength}</Caption> : props.counter ? <Caption>QTD: {props.length}</Caption> : null}
+                      </Stack>        
+                    }
+                    />
+                )}
+            />
+        )
+
     }
     // Retorna o textfield
 
@@ -124,6 +179,7 @@ export default function EntradaForm(props) {
         obj['resolver'] = yupResolver(schemaValidator)
     }
     const {  handleSubmit, setValue, control, formState: {  errors }, watch, getValues } = useForm(obj);
+    // Caso algum campo precise ser controlado por exibição
     useEffect(()=>{
         // Se mudar limpa o campo dos colaboradores
         if(exibirSe?.ouvir) setValue(exibirSe.atualizar, '');
@@ -140,15 +196,13 @@ export default function EntradaForm(props) {
                 let itemDefaultValue = defaultValue ? defaultValue : defaultChecked ? defaultChecked : '';
                 let length = (maxLength || counter) ? watch(name)?.length : null;
                 // Se tiver a props exibirSe, precisamos verificar o valor
-                const chaveExibir = ele.exibirSe ? Object.keys(ele.exibirSe)[0] : null;
+                const chaveExibir = ele.exibirSe ? exibirSe.ouvir : null;
                 // Opcao que oculta/exibe o campo do formulario
                 let exibirCampoPorPadrao = chaveExibir ? false : true;
                 
-                if(chaveExibir && watch( chaveExibir )  ){
-                    //console.log(getValues(chaveExibir));
-                    
+                if(chaveExibir && watch( chaveExibir )  ){                    
                     // Executa a funcao de callback repassada para exibirSe passando o valor e esperando o retorno
-                    const opcoes = ele.exibirSe[chaveExibir]( watch( chaveExibir ) );
+                    const opcoes = ele.exibirSe( watch( chaveExibir ) );
                     // Agora verifica o tipo para determinar o objeto que sofrera alteracao
                     switch(type){
                         case 'select':
@@ -267,11 +321,30 @@ EntradaForm.defaultProps = {
 }
 
 EntradaForm.propTypes = {
+    /** Um objeto que deve determinar duas propriedades, ouvir e atualizar que são os names dos campos que precisam ser ouvido e alterado. Caso este recurso seja utilizado ele precisa ser controlado pela props exibirSe atribuido ao item do schema que vai ter seu valor atualizado */
+    exibirSe: PropTypes.shape({
+        ouvir: PropTypes.string,
+        atualizar: PropTypes.string,
+    }),
     /** Props que desativa todos os campos e coloca um circularProgressIndicador no button */
     wait: PropTypes.bool.isRequired,
     /** Um array contendo os campos de formulario que serão acionados para monta-lo */
     schema: PropTypes.arrayOf(
-        PropTypes.shape({
+        PropTypes.shape({ 
+            /** Uma props para formatacao de numero de tamanho conhecido e esperado, como telefone, cpf etc... Deve ser um array com cada numero sendo um item do array em expressão regular */
+            mask: PropTypes.array,
+            /** Uma props que permite definir este campo como um numérico de valor outras opcoes podem ser repassadas usando o mdelo de react-text-mask */
+            toMoney: PropTypes.shape({
+                prefix: PropTypes.string,
+                thousandsSeparatorSymbol: PropTypes.oneOf(['.', ',']),
+                allowDecimal: PropTypes.bool,
+                decimalSymbol: PropTypes.oneOf(['.', ',']),
+                decimalLimit: PropTypes.number,
+                integerLimit: PropTypes.number,
+
+            }),
+            /** Quando usado esta props recebe uma funcao de callback com o valor do campo informado na props exibirSe.ouvir global. Ele deve retornar o novo valor do item (caso Select e Radio) */
+            exibirSe: PropTypes.func,
             /** Uma string que represente o icone */
             icon: PropTypes.string,
             /** Os tipos dos itens */

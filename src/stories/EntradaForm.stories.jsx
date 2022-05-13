@@ -249,35 +249,6 @@ const OBJ_ITENS = {
 //
 const ITENS7 = [
   {
-   name: 'titulo',
-   icon: 'PostAdd',
-   type: 'text',
-   label: 'Titulo',
-   defaultValue: '',
-   extraProps: {
-     fullWidth: true
-   },
-   grid: {
-     xs: 12, 
-   },
-  },
-  {
-    type: 'textarea',
-    icon: 'Computer',
-    label: 'Descrição',
-    name: 'descricao',
-    defaultValue: '',
-    placeholder: 'Digite uma descrição válida',
-    extraProps: {
-      multiline: true, minRows: 2,
-      fullWidth: true,
-    },
-    //maxLength: 10,
-    grid: {
-      xs: 12, 
-    }
-  },
-  {
     name: 'lojas',
     type: 'select',
     autoFormat: true,
@@ -289,17 +260,53 @@ const ITENS7 = [
     name: 'colaboradores',
     type: 'select',
     autoFormat: true,
-    exibirSe: {'lojas': (selecionado) =>{
+    exibirSe: (selecionado) =>{
       const { value } = selecionado;
       
       return OBJ_ITENS[value];
-      if(!Object.keys(OBJ_ITENS).includes(value)) return [];
-      return OBJ_ITENS[value];
-    }},
+    },
     itens: [],    
     label: 'Escolha o colaborador',
     defaultValue : ""
   }
+]
+//
+const ITENS8 = [
+  {
+    name: 'valor',
+    icon: 'AttachMoney',
+    type: 'text',
+    label: 'Valor',
+    defaultValue: '',
+    toMoney: {
+      integerLimit: 4
+    },
+    extraProps: {
+      fullWidth: true
+    },
+    grid: {
+      xs: 12, 
+    },
+   },
+
+]
+
+const ITENS9 = [
+  {
+    name: 'valor',
+    icon: 'Phone',
+    type: 'text',
+    label: 'Celular',
+    defaultValue: '',
+    mask: ['(', /\d/, /\d/, ')', /[9]/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/ ],
+    extraProps: {
+      fullWidth: true
+    },
+    grid: {
+      xs: 12, 
+    },
+   },
+
 ]
 
 export default {
@@ -323,6 +330,9 @@ export default {
         <li>{`autoFormat: Propriedade do select para autoFormataçao do campo itens e defaultValue`}</li>
         <li>{`maxLength: Um numero que determina o limite maximo de caracteres digitados`}</li>
         <li>{`counter: Um boleano que ativa o contador de caracteres no campo`}</li>
+        <li>{`exibirSe: Uma funcao de callback que deve retornar o valor a ser atribuido (caso Select e Radio este é o valor a props itens) a este campo tornando-o visivel na tela. Campo com a props exibirSe fica oculto por padrao`}</li>
+        <li>{`toMoney: Um objeto que determina que este campo deve ser formatado como valor monetario. Ver react-text-mask para mais detalhes do objeto esperado`}</li>
+        <li>{`mask: Um array para formatação de uma mascara propria para o campo, como um telefone (00) 00000-0000 ou outro campo numerico qualqer`}</li>
       </ul>
     </div>
 }
@@ -499,6 +509,44 @@ ExibirSe.story = {
     parameters: {
       docs: {
           storyDescription: 'Formulário que exibe um campo se o outro já tiver valor preenchido'
+      }
+  }
+}
+
+export const ComMaskToMoney = Template.bind({});
+
+ComMaskToMoney.args = {
+  schema: ITENS8,
+  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+ComMaskToMoney.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulario com autoformatacao para campo monetario usando a props toMoney no item a ser formatado. Neste exemplo o tamanho máximo é 4 numero inteiros e 2 decimais.'
+      }
+  }
+}
+
+export const ComMask = Template.bind({});
+
+ComMask.args = {
+  schema: ITENS9,
+  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+ComMask.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulario com formatacao para campo numérico customizado'
       }
   }
 }

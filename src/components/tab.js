@@ -34,7 +34,7 @@ const Tab = ({ corpo, cabe }) => {
     const [pagina, setPagina ] = useState(0);
     
     return (
-        <Container disableGutters disablePadding >
+        <Container disableGutters disablePadding maxWidth={false} >
             
             <Tabs 
               variant="scrollable"
