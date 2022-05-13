@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { Checkbox, Hidden, Stack, Button, Grid, TextField, CircularProgress, Switch } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
@@ -118,12 +118,17 @@ const EntradaFormRadio = memo(props=>(
 ))
 
 export default function EntradaForm(props) {
-    const { wait, schema, onSubmit, schemaMessageError, schemaValidator } = props;
+    const { exibirSe, wait, schema, onSubmit, schemaMessageError, schemaValidator } = props;
     const obj = {};
     if(schemaValidator){
         obj['resolver'] = yupResolver(schemaValidator)
     }
-    const {  handleSubmit, setValue, control, formState: { isSubmitSuccessful, errors }, watch } = useForm(obj);
+    const {  handleSubmit, setValue, control, formState: {  errors }, watch, getValues } = useForm(obj);
+    useEffect(()=>{
+        // Se mudar limpa o campo dos colaboradores
+        if(exibirSe?.ouvir) setValue(exibirSe.atualizar, '');
+       
+    },[exibirSe, getValues(exibirSe?.ouvir)]);
 
   return (
       <>
@@ -138,8 +143,9 @@ export default function EntradaForm(props) {
                 const chaveExibir = ele.exibirSe ? Object.keys(ele.exibirSe)[0] : null;
                 // Opcao que oculta/exibe o campo do formulario
                 let exibirCampoPorPadrao = chaveExibir ? false : true;
-                console.log(chaveExibir && watch( chaveExibir ));
+                
                 if(chaveExibir && watch( chaveExibir )  ){
+                    //console.log(getValues(chaveExibir));
                     
                     // Executa a funcao de callback repassada para exibirSe passando o valor e esperando o retorno
                     const opcoes = ele.exibirSe[chaveExibir]( watch( chaveExibir ) );
@@ -154,10 +160,6 @@ export default function EntradaForm(props) {
                             break;
                         
                     }
-                    // Se o defaultValue deste campo existir nao limpa
-                    setValue(name, ''); // Limpando o valor default
-                    
-                    
                     exibirCampoPorPadrao = true;
 
                 }

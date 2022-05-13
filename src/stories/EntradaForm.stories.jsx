@@ -484,7 +484,11 @@ CheckBox.story = {
 export const ExibirSe = Template.bind({});
 
 ExibirSe.args = {
-  schema: ITENS7,  
+  schema: ITENS7,
+  exibirSe: {
+    ouvir: 'lojas',
+    atualizar: 'colaboradores',
+  },  
   onSubmit: (val)=>{
     window.alert(JSON.stringify(val));
   }
