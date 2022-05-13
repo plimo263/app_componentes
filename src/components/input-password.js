@@ -17,7 +17,7 @@ export default function InputPassword(props) {
         type={exibirSenha ? 'text': 'password'} sx={sx}
         label={label}
         InputProps={{
-            startAdornment: <LockIcon sx={{color: theme=> theme.palette.primary.main }} />,
+            startAdornment: <LockIcon  />,
             endAdornment: (
                 <IconButton onClick={()=> setExibirSenha(state=>!state)}>
                     {exibirSenha ? <VisibilityIcon /> : <VisibilityOffIcon />}

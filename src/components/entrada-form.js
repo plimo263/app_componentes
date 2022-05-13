@@ -8,6 +8,7 @@ import { createNumberMask } from 'text-mask-addons';
 
 import Select from './select';
 import Icone from './icone';
+import InputPassword from './input-password';
 import RadioForm from './radio-form';
 import { Caption, Subtitle2 } from './tipografia';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -179,12 +180,14 @@ export default function EntradaForm(props) {
         obj['resolver'] = yupResolver(schemaValidator)
     }
     const {  handleSubmit, setValue, control, formState: {  errors }, watch, getValues } = useForm(obj);
+    //
+    const valorAtualizado = getValues(exibirSe?.ouvir);
     // Caso algum campo precise ser controlado por exibição
     useEffect(()=>{
         // Se mudar limpa o campo dos colaboradores
         if(exibirSe?.ouvir) setValue(exibirSe.atualizar, '');
        
-    },[exibirSe, getValues(exibirSe?.ouvir)]);
+    },[exibirSe, valorAtualizado, setValue ]);
 
   return (
       <>
@@ -275,6 +278,18 @@ export default function EntradaForm(props) {
                                                 icon={ele.icon}
                                             />
 
+                                        )
+                                    case 'password':
+                                        return (
+                                            <InputPassword 
+                                                {...ele}
+                                                
+                                                {...propsController}
+                                                propsTextField={{fullWidth: true, ...ele.extraProps}}
+                                                error={!!errors[name] && schemaMessageError[name]}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
                                         )
                                     default:
                                         return (
