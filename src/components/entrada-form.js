@@ -285,9 +285,8 @@ export default function EntradaForm(props) {
                                                 {...ele}
                                                 
                                                 {...propsController}
-                                                propsTextField={{fullWidth: true, ...ele.extraProps}}
+                                                propsTextField={{fullWidth: true, ...ele.extraProps, disabled: wait }}
                                                 error={!!errors[name] && schemaMessageError[name]}
-                                                disabled={wait}
                                                 icon={ele.icon}
                                             />
                                         )
