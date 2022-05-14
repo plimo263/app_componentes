@@ -68,7 +68,7 @@ const EntradaFormNormal = memo( (props)=>{
                 mask={maskToMoney || props.mask} 
                 guide={false}
                 {...props} 
-                inputMode='numeric'
+                
                 render={(ref, props)=>(
                     <TextField      
                     InputLabelProps={{shrink: true }} 
@@ -80,6 +80,7 @@ const EntradaFormNormal = memo( (props)=>{
                     
                     error={!!props.error} 
                     inputProps={{
+                        inputMode: "tel", pattern: "[0-9]*", autoComplete: 'off',
                         ...props.extraProps?.inputProps,
                         maxLength: props.maxLength ? props.maxLength : null,
                     }}
@@ -196,7 +197,7 @@ export default function EntradaForm(props) {
                 const { type, grid, name, defaultValue, defaultChecked, counter, maxLength } = ele;
                 const itemGrid = grid ? grid : {xs: 12};
                 //
-                let itemDefaultValue = defaultValue ? defaultValue : defaultChecked ? defaultChecked : '';
+                let itemDefaultValue = String(defaultValue).length > 0 ? defaultValue : defaultChecked ? defaultChecked : '';
                 let length = (maxLength || counter) ? watch(name)?.length : null;
                 // Se tiver a props exibirSe, precisamos verificar o valor
                 const chaveExibir = ele.exibirSe ? exibirSe.ouvir : null;
