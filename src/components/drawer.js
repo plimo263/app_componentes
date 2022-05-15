@@ -19,7 +19,7 @@ const Deslizavel = ({ corpo, fecharDrawer })=>(
       open={Boolean(corpo)}
       onClose={fecharDrawer}
     >
-        <Stack direction='row' sx={{position: 'sticky', top: 0, height: 24, w: '100%'}}>
+        <Stack direction='row' sx={{zIndex: 1000, backgroundColor: 'background.paper',position: 'sticky', top: 0, height: 24, w: '100%'}}>
             <Paper>
                 <Puller />
             </Paper>
