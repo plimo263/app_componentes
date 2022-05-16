@@ -308,6 +308,18 @@ const ITENS9 = [
    },
 
 ]
+const ITENS10 = [
+  {
+    name: 'pergunta1',
+    label: '',
+    type: 'radio',
+    orientation: 'horizontal',
+    itens: [[1, 'SIM'], [2, 'NÃO']],
+    titulo: 'Escolha de candidato',
+    descricao: 'Dentre os candidatos deste ano (2022) você votaria no mesmo que votou na última eleição ?'
+
+  }
+]
 
 export default {
   title: 'Example/EntradaForm',
@@ -333,6 +345,10 @@ export default {
         <li>{`exibirSe: Uma funcao de callback que deve retornar o valor a ser atribuido (caso Select e Radio este é o valor a props itens) a este campo tornando-o visivel na tela. Campo com a props exibirSe fica oculto por padrao`}</li>
         <li>{`toMoney: Um objeto que determina que este campo deve ser formatado como valor monetario. Ver react-text-mask para mais detalhes do objeto esperado`}</li>
         <li>{`mask: Um array para formatação de uma mascara propria para o campo, como um telefone (00) 00000-0000 ou outro campo numerico qualqer`}</li>
+        <li>{`titulo: Uma string que permite você a dar um titulo a pergunta`}</li>
+        <li>{`descricao: Assim como titulo a descricao te permite definir um texto descritivo (abaixo do titulo) a pergunta`}</li>
+        <li>{`tituloTipografia: Um objeto para formatar o titulo com cor, alinhamento, tamanho da fonte etc...`}</li>
+        <li>{`descricaoTipografia: Um objeto para formatar a descricao com cor, alinhamento, tamanho da fonte etc...`}</li>
       </ul>
     </div>
 }
@@ -547,6 +563,25 @@ ComMask.story = {
     parameters: {
       docs: {
           storyDescription: 'Formulario com formatacao para campo numérico customizado'
+      }
+  }
+}
+
+export const ComTituloEDescricao = Template.bind({});
+
+ComTituloEDescricao.args = {
+  schema: ITENS10,
+  
+  onSubmit: (val)=>{
+    window.alert(JSON.stringify(val));
+  }
+}
+
+
+ComTituloEDescricao.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Formulario com questao envolvendo titulo e descricao'
       }
   }
 }

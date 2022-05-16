@@ -221,9 +221,14 @@ export default function EntradaForm(props) {
                     exibirCampoPorPadrao = true;
 
                 }
+                // Define tipografias padrao para titulo e descricao
+                const tituloTipografia = ele?.tituloTipografia ? ele.tituloTipografia : {};
+                const descricaoTipografia = ele?.descricaoTipografia ? ele.descricaoTipografia : {'component': 'p', 'align': 'center'};
 
                 return (
                     <Grid sx={{p: .5, display: exibirCampoPorPadrao ? 'block' : 'none' }} item {...itemGrid} key={idx}>
+                        {ele?.titulo && <Subtitle2 {...tituloTipografia}>{ele.titulo}</Subtitle2>}
+                        {ele?.descricao && <Caption {...descricaoTipografia}>{ele.descricao}</Caption>}
                         <Controller 
                             control={control}
                             name={name}
@@ -346,6 +351,14 @@ EntradaForm.propTypes = {
     /** Um array contendo os campos de formulario que serão acionados para monta-lo */
     schema: PropTypes.arrayOf(
         PropTypes.shape({ 
+            /** Props que permite definir um titulo sobre a questão enviada */
+            titulo: PropTypes.string,
+            /** Props que permite definir uma descricao sobre a questão enviada */
+            descricao: PropTypes.string,
+            /** Props para você estilizar o titulo da pergunta com cor, tamanho da fonte, alinhamento etc.. */
+            tituloTipografia: PropTypes.object,
+            /** Props para você estilizar a descricao da pergunta com cor, tamanho da fonte, alinhamento etc.. */
+            descricaoTipografia: PropTypes.object,
             /** Uma props para formatacao de numero de tamanho conhecido e esperado, como telefone, cpf etc... Deve ser um array com cada numero sendo um item do array em expressão regular */
             mask: PropTypes.array,
             /** Uma props que permite definir este campo como um numérico de valor outras opcoes podem ser repassadas usando o mdelo de react-text-mask */
@@ -386,6 +399,7 @@ EntradaForm.propTypes = {
             counter: PropTypes.bool,
             /** Um parametro para controlaro tamanho do item em radioForm */
             size: PropTypes.oneOf(['small', 'medium', 'large']),
+            
         })
     ).isRequired,
     /** Um objeto que determina o schema de validação (vide yup para montar o schema) */
