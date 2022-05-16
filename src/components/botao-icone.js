@@ -12,7 +12,6 @@ const  BotaoIcone = (props)=>{
     )
 }
 
-
 const TIPO_ICONES = [
     'Add', 'PostAdd', 'Menu', 'TrendingUp', 'Build', 'Computer', 'AccessTime', 
     'WbSunny', 'Phone', 'Visibility', 'Biotech', 'Engineering', 'SwapHoriz',
@@ -24,7 +23,7 @@ const TIPO_ICONES = [
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
-    'EventBusy', 'Event',
+    'EventBusy', 'Event', 'CurrencyExchange'
 ];
 
 BotaoIcone.propTypes = {
