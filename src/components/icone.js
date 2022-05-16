@@ -67,6 +67,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import CakeIcon from '@mui/icons-material/Cake';
 import CelebrationIcon from '@mui/icons-material/Celebration';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
+import EventIcon from '@mui/icons-material/Event';
 
 
 const Icone = (props) => {
@@ -205,6 +206,8 @@ const Icone = (props) => {
             return <CelebrationIcon {...props} />;
         case 'EventBusy':
             return <EventBusyIcon {...props} />;
+        case 'Event':
+            return <EventIcon {...props} />;
                 
         default:
             return '';
@@ -222,7 +225,7 @@ const TIPO_ICONES = [
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
-    'EventBusy',
+    'EventBusy', 'Event',
 ];
 
 Icone.propTypes = {
