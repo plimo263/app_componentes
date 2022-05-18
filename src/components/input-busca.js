@@ -5,7 +5,7 @@ import { TextField, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useDebounce } from 'react-use';
 
-const Filtro = ({ sx, fullWidth, placeholder, label, size,  desativarPesquisaLenta, filtro, setFiltro })=>{
+const Filtro = ({ sx, fullWidth, placeholder, label, size, delay, desativarPesquisaLenta, filtro, setFiltro })=>{
    
     const [ aguardar, setAguardar ] = useState(false);
     // Cria um estado para determinar quando o usuario deixou de digitar
@@ -17,7 +17,7 @@ const Filtro = ({ sx, fullWidth, placeholder, label, size,  desativarPesquisaLen
             setFiltro(valor);
             setAguardar(false);
 
-        }, desativarPesquisaLenta ? 1 : 500, [valor]
+        }, desativarPesquisaLenta ? 1 : delay, [valor]
     );
 
     return (
@@ -43,6 +43,7 @@ const Filtro = ({ sx, fullWidth, placeholder, label, size,  desativarPesquisaLen
 Filtro.defaultProps = {
     filtro: '',
     sx: {mb: 5},
+    delay: 500,
     label: 'Filtro',
     placeholder: 'Digite o que procura',
     size: 'small',
@@ -51,7 +52,8 @@ Filtro.defaultProps = {
 };
 //
 Filtro.propTypes = {
-    
+    /** A quantidade de tempo (em ms) até que a função de callback seja executada */
+    delay: PropTypes.number,    
     /** Esta propriedade define o valor default do campo */
     filtro: PropTypes.string,
     /** Propriedades sx para melhorar a barra de busca (que é um TextField) */
