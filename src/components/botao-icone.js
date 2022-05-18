@@ -23,7 +23,7 @@ const TIPO_ICONES = [
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
-    'EventBusy', 'Event', 'CurrencyExchange'
+    'EventBusy', 'Event', 'CurrencyExchange', 'Remove'
 ];
 
 BotaoIcone.propTypes = {

@@ -69,6 +69,7 @@ import CelebrationIcon from '@mui/icons-material/Celebration';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import EventIcon from '@mui/icons-material/Event';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 
 const Icone = (props) => {
@@ -211,6 +212,8 @@ const Icone = (props) => {
             return <EventIcon {...props} />;
         case 'CurrencyExchange':
             return <CurrencyExchangeIcon {...props} />;
+        case 'Remove':
+            return <RemoveIcon {...props} />;
                 
         default:
             return '';
@@ -228,7 +231,7 @@ const TIPO_ICONES = [
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
-    'EventBusy', 'Event', 'CurrencyExchange'
+    'EventBusy', 'Event', 'CurrencyExchange', 'Remove'
 ];
 
 Icone.propTypes = {
