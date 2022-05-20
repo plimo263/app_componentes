@@ -174,161 +174,7 @@ const EntradaFormRadio = memo(props=>(
     </Stack>
 ))
 
-// Criando um Componente que recebe as props necessarias para dar continuidade na criacao do formulario
-const ConnectForm = (props)=>{
-    const {watch, control, wait,  schema, buttonProps, exibirSe } = props;
-    const { errors, schemaMessageError, handleSubmit, onSubmit } = props;
-
-
-    return (
-        <>
-            <Grid container>
-                {schema.map((ele,idx)=>{
-                    const { type, grid, name, defaultValue, defaultChecked, counter, maxLength } = ele;
-                    const itemGrid = grid ? grid : {xs: 12};
-                    //
-                    let itemDefaultValue = String(defaultValue).length > 0 ? defaultValue : defaultChecked ? defaultChecked : '';
-                    let length = (maxLength || counter) ? watch(name)?.length : null;
-                    // Se tiver a props exibirSe, precisamos verificar o valor
-                    const chaveExibir = ele.exibirSe ? exibirSe.ouvir : null;
-                    // Opcao que oculta/exibe o campo do formulario
-                    let exibirCampoPorPadrao = chaveExibir ? false : true;
-                    
-                    if(chaveExibir && watch( chaveExibir )  ){                    
-                        // Executa a funcao de callback repassada para exibirSe passando o valor e esperando o retorno
-                        const opcoes = ele.exibirSe( watch( chaveExibir ) );
-                        // Agora verifica o tipo para determinar o objeto que sofrera alteracao
-                        switch(type){
-                            case 'select':
-                            case 'radio':
-                                ele.itens = opcoes;
-                                break;
-                            default: // Eles nao tem opcoes so esperam o valor default
-                                itemDefaultValue = opcoes;
-                                break;
-                            
-                        }
-                        exibirCampoPorPadrao = true;
-    
-                    }
-                    // Define tipografias padrao para titulo e descricao
-                    const tituloTipografia = ele?.tituloTipografia ? ele.tituloTipografia : {};
-                    const descricaoTipografia = ele?.descricaoTipografia ? ele.descricaoTipografia : {'component': 'p', 'align': 'center'};
-    
-                    return (
-                        <Grid sx={{p: .5, display: exibirCampoPorPadrao ? 'block' : 'none' }} item {...itemGrid} key={idx}>
-                            {ele?.titulo && <Subtitle2 {...tituloTipografia}>{ele.titulo}</Subtitle2>}
-                            {ele?.descricao && <Caption {...descricaoTipografia}>{ele.descricao}</Caption>}
-                            <Controller 
-                                control={control}
-                                name={name}
-                                defaultValue={itemDefaultValue}
-                                render={(propsController)=>{
-    
-                                    switch(type){
-                                        case 'select':
-                                            return (
-                                                <EntradaFormSelect 
-                                                    {...propsController.field} {...ele} 
-                                                    options={ele.itens} 
-                                                    isDisabled={wait}
-                                                    error={!!errors && errors[name] && schemaMessageError[name]}
-                                                />
-                                            )
-                                        case 'switch':
-                                            return (
-                                                <EntradaFormSwitch 
-                                                    {...propsController.field}
-                                                    {...ele}
-                                                    disabled={wait}
-                                                    icon={ele.icon}
-                                                />
-                                            )
-                                        case 'checkbox':
-                                            return (
-                                                <EntradaFormCheckbox
-                                                    {...propsController.field}
-                                                    {...ele}
-                                                    disabled={wait}
-                                                    icon={ele.icon}
-                                                />
-                                            )
-                                        case 'radio':
-                                            return (
-                                                <EntradaFormRadio 
-                                                    {...propsController.field}
-                                                    {...ele}
-                                                    disabled={wait}
-                                                    icon={ele.icon}
-                                                    error={!!errors[name] && schemaMessageError[name]}
-                                                                                                
-                                                />
-                                            )
-                                        case 'file':
-                                            return (
-                                                <EntradaFormNormal 
-                                                    propsController={propsController}
-                                                    {...ele}
-                                                    error={!!errors[name] && schemaMessageError[name]}
-                                                    disabled={wait}
-                                                    icon={ele.icon}
-                                                />
-    
-                                            )
-                                        case 'password':
-                                            return (
-                                                <InputPassword 
-                                                    {...ele}
-                                                    
-                                                    {...propsController}
-                                                    propsTextField={{fullWidth: true, ...ele.extraProps, disabled: wait }}
-                                                    error={!!errors[name] && schemaMessageError[name]}
-                                                    icon={ele.icon}
-                                                />
-                                            )
-                                        default:
-                                            return (
-                                            <EntradaFormNormal {...propsController.field}
-                                                {...ele}
-                                                error={!!errors[name] && schemaMessageError[name]}
-                                                length={length}
-                                                maxLength={maxLength}
-                                                disabled={wait}
-                                                icon={ele.icon}
-                                            />
-                                        );
-                                            
-                                    }
-                                }}
-                            />
-                        </Grid>
-                    )
-    
-                })}
-            </Grid>
-            <Grid container sx={{my: 1}}>
-                <Hidden smDown>
-                    <Grid item md={3} />
-                </Hidden>
-                <Grid item xs={12} md={6}>
-                    <Button disabled={wait} fullWidth={true} variant='contained' {...buttonProps} onClick={handleSubmit(onSubmit)}
-                        startIcon={wait ? <CircularProgress size={20} sx={{color: buttonProps?.iconColor }} /> : <Icone icone='Save' sx={{color: buttonProps?.iconColor }} />}
-                    >
-                        {buttonProps?.label ? buttonProps?.label : 'ENVIAR'} 
-                    </Button>
-                </Grid>
-                <Hidden smDown>
-                    <Grid item md={3} />
-                </Hidden>
-            </Grid>
-        </>
-    )
-}
-// Padrao do entradaForm usando o useForm interno
-const PadraoEntradaForm = (props)=>{
-    // const {watch, control, wait,  schema, buttonProps, exibirSe } = props;
-    // const { errors, schemaMessageError, handleSubmit, onSubmit } = props;
-
+export default function EntradaForm(props) {
     const { exibirSe, wait, schema, onSubmit, schemaMessageError, schemaValidator } = props;
     const obj = {};
     if(schemaValidator){
@@ -344,71 +190,157 @@ const PadraoEntradaForm = (props)=>{
        
     },[exibirSe, valorAtualizado, setValue ]);
 
-    return (
-        <ConnectForm 
-            exibirSe={exibirSe}
-            wait={wait}
-            watch={watch}
-            control={control}
-            schema={schema}
-            buttonProps={props.buttonProps}
-            errors={errors}
-            handleSubmit={handleSubmit}
-            onSubmit={onSubmit}
-            schemaMessageError={schemaMessageError}
-            
-        />
-    )
+  return (
+      <>
+        <Grid container>
+            {schema.map((ele,idx)=>{
+                const { type, grid, name, defaultValue, defaultChecked, counter, maxLength } = ele;
+                const itemGrid = grid ? grid : {xs: 12};
+                //
+                let itemDefaultValue = String(defaultValue).length > 0 ? defaultValue : defaultChecked ? defaultChecked : '';
+                let length = (maxLength || counter) ? watch(name)?.length : null;
+                // Se tiver a props exibirSe, precisamos verificar o valor
+                const chaveExibir = ele.exibirSe ? exibirSe.ouvir : null;
+                // Opcao que oculta/exibe o campo do formulario
+                let exibirCampoPorPadrao = chaveExibir ? false : true;
+                
+                if(chaveExibir && watch( chaveExibir )  ){                    
+                    // Executa a funcao de callback repassada para exibirSe passando o valor e esperando o retorno
+                    const opcoes = ele.exibirSe( watch( chaveExibir ) );
+                    // Agora verifica o tipo para determinar o objeto que sofrera alteracao
+                    switch(type){
+                        case 'select':
+                        case 'radio':
+                            ele.itens = opcoes;
+                            break;
+                        default: // Eles nao tem opcoes so esperam o valor default
+                            itemDefaultValue = opcoes;
+                            break;
+                        
+                    }
+                    exibirCampoPorPadrao = true;
+
+                }
+                // Define tipografias padrao para titulo e descricao
+                const tituloTipografia = ele?.tituloTipografia ? ele.tituloTipografia : {};
+                const descricaoTipografia = ele?.descricaoTipografia ? ele.descricaoTipografia : {'component': 'p', 'align': 'center'};
+
+                return (
+                    <Grid sx={{p: .5, display: exibirCampoPorPadrao ? 'block' : 'none' }} item {...itemGrid} key={idx}>
+                        {ele?.titulo && <Subtitle2 {...tituloTipografia}>{ele.titulo}</Subtitle2>}
+                        {ele?.descricao && <Caption {...descricaoTipografia}>{ele.descricao}</Caption>}
+                        <Controller 
+                            control={control}
+                            name={name}
+                            defaultValue={itemDefaultValue}
+                            render={(propsController)=>{
+
+                                switch(type){
+                                    case 'select':
+                                        return (
+                                            <EntradaFormSelect 
+                                                {...propsController.field} {...ele} 
+                                                options={ele.itens} 
+                                                isDisabled={wait}
+                                                error={!!errors && errors[name] && schemaMessageError[name]}
+                                            />
+                                        )
+                                    case 'switch':
+                                        return (
+                                            <EntradaFormSwitch 
+                                                {...propsController.field}
+                                                {...ele}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
+                                        )
+                                    case 'checkbox':
+                                        return (
+                                            <EntradaFormCheckbox
+                                                {...propsController.field}
+                                                {...ele}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
+                                        )
+                                    case 'radio':
+                                        return (
+                                            <EntradaFormRadio 
+                                                {...propsController.field}
+                                                {...ele}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                                error={!!errors[name] && schemaMessageError[name]}
+                                                                                            
+                                            />
+                                        )
+                                    case 'file':
+                                        return (
+                                            <EntradaFormNormal 
+                                                propsController={propsController}
+                                                {...ele}
+                                                error={!!errors[name] && schemaMessageError[name]}
+                                                disabled={wait}
+                                                icon={ele.icon}
+                                            />
+
+                                        )
+                                    case 'password':
+                                        return (
+                                            <InputPassword 
+                                                {...ele}
+                                                
+                                                {...propsController}
+                                                propsTextField={{fullWidth: true, ...ele.extraProps, disabled: wait }}
+                                                error={!!errors[name] && schemaMessageError[name]}
+                                                icon={ele.icon}
+                                            />
+                                        )
+                                    default:
+                                        return (
+                                        <EntradaFormNormal {...propsController.field}
+                                            {...ele}
+                                            error={!!errors[name] && schemaMessageError[name]}
+                                            length={length}
+                                            maxLength={maxLength}
+                                            disabled={wait}
+                                            icon={ele.icon}
+                                        />
+                                    );
+                                        
+                                }
+                            }}
+                        />
+                    </Grid>
+                )
+
+            })}
+        </Grid>
+        <Grid container sx={{my: 1}}>
+            <Hidden smDown>
+                <Grid item md={3} />
+            </Hidden>
+            <Grid item xs={12} md={6}>
+                <Button disabled={wait} fullWidth={true} variant='contained' {...props.buttonProps} onClick={handleSubmit(onSubmit)}
+                    startIcon={wait ? <CircularProgress size={20} sx={{color: props?.buttonProps?.iconColor }} /> : <Icone icone='Save' sx={{color: props?.buttonProps?.iconColor }} />}
+                >
+                    {props.buttonProps?.label ? props.buttonProps?.label : 'ENVIAR'} 
+                </Button>
+            </Grid>
+            <Hidden smDown>
+                <Grid item md={3} />
+            </Hidden>
+        </Grid>
+    </>
+  )
 }
-// EntradaForm que faz uso do objeto useForm externo
-const ExternoEntradaForm = props=>{
 
-    const { exibirSe, wait, schema, onSubmit, schemaMessageError, schemaValidator } = props;
-    // const obj = {};
-    // if(schemaValidator){
-    //     obj['resolver'] = yupResolver(schemaValidator)
-    // }
-    const {  handleSubmit, setValue, control, formState: {  errors }, watch, getValues } = props.useForm;
-    //
-    const valorAtualizado = getValues(exibirSe?.ouvir);
-    // Caso algum campo precise ser controlado por exibição
-    useEffect(()=>{
-        // Se mudar limpa o campo dos colaboradores
-        if(exibirSe?.ouvir) setValue(exibirSe.atualizar, '');
-       
-    },[exibirSe, valorAtualizado, setValue ]);
-
-    return (
-    <ConnectForm 
-        exibirSe={exibirSe}
-        wait={wait}
-        watch={watch}
-        control={control}
-        schema={schema}
-        buttonProps={props.buttonProps}
-        errors={errors}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        schemaMessageError={schemaMessageError}
-    />
-    )
-}
-
-
-export default function EntradaForm(props) {
-
-    return props.useForm ? <ExternoEntradaForm {...props} /> : <PadraoEntradaForm {...props} />;
-
-}
-//
 EntradaForm.defaultProps = {
     wait: false,
     schemaMessageError: {},
 }
 
 EntradaForm.propTypes = {
-    /** Esta props te dá o direito de repassar o seu proprio useForm (retorno do hook) para controle externo. Usado em casos onde um useFieldArray seja usado para em conjunto com o formulario do entradaForm */
-    useForm: PropTypes.object,
     /** Um objeto que deve determinar duas propriedades, ouvir e atualizar que são os names dos campos que precisam ser ouvido e alterado. Caso este recurso seja utilizado ele precisa ser controlado pela props exibirSe atribuido ao item do schema que vai ter seu valor atualizado */
     exibirSe: PropTypes.shape({
         ouvir: PropTypes.string,
