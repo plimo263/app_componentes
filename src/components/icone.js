@@ -71,6 +71,7 @@ import EventIcon from '@mui/icons-material/Event';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import MedicationIcon from '@mui/icons-material/Medication';
 
 
 const Icone = (props) => {
@@ -217,6 +218,8 @@ const Icone = (props) => {
             return <RemoveIcon {...props} />;
         case 'AddShoppingCart':
             return <AddShoppingCartIcon {...props} />;
+        case 'Medication':
+            return <MedicationIcon {...props} />;
                 
         default:
             return '';
@@ -234,7 +237,7 @@ const TIPO_ICONES = [
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
-    'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart'
+    'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication',
 ];
 
 Icone.propTypes = {
