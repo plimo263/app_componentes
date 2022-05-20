@@ -58,3 +58,21 @@ ComMonetario.args = {
   corpo: corpo,
   monetario: [3,4,5,6,7,8,9,10,11,12,13],
 }
+
+export const AlteraRodape = Template.bind({});
+
+AlteraRodape.story = {
+    parameters: {
+      docs: {
+          storyDescription: 'Tabela com rodape nos indices 1, 2 e 3 customizados.'
+      }
+  }
+}
+
+AlteraRodape.args = {
+  cabe: cabe,
+  corpo: corpo,
+  calcularRodape: true,
+  alteraRodape: {1: 'CUSTOMIZADO', 2: 'EU CUSTOMIZEI', 3: 'TOTALMENTE CUSTOMIZADO'},
+  monetario: [3,4,5,6,7,8,9,10,11,12,13],
+}

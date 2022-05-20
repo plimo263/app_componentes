@@ -176,38 +176,12 @@ function formatarCabe(cabe, opt){
             
             return formatarValores(value, idx, opt);
 
-            // // E o valor padrao quando nao se tem dados
-            // if(value === '--') return value;
-
-            // // Se for o campo data e ele ser esta coluna
-            // if(opt?.data && opt.data?.includes(idx) && value?.length > 7 ){
-            //     return format(parseISO(value), 'dd/MM/yyyy')
-            // }
-            // // Se for o campo dataCustom entao eu devo customizar  com a datastring enviada
-            // if(opt?.dataCustom && Object.keys(opt.dataCustom).includes( idx.toString() ) ){
-            //     return format(parseISO(value), opt.dataCustom[idx] );
-            // }
-            // // Se o indice for monetario
-            // if(opt?.monetario && opt?.monetario.includes(idx)){
-            //     return converter(value);
-            // }
-            // // Se a formatacao for data/hora pode aplicar
-            // if(opt?.dataHora && opt?.dataHora.includes(idx) && value?.length > 8){
-            //     return format(parseISO(value), 'dd/MM/yyyy HH:mm')
-            // }
-            // /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
-            // if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
-            //     return opt.envolver[idx](value, row.id, row);
-            // }
-            // // Veja se o campo e um telefone e converta-o
-            // if(opt?.telefone && opt.telefone.includes(idx) ){
-            //     return converterTelefone(value);
-            // }
-            // // Senao so retorna o valor
-            // return value;
         },
         Footer: ({rows, column})=>{
-            
+            // Verifica se tem uma sobreescricao de valor para o rodape
+            if(opt?.alteraRodape && opt.alteraRodape?.hasOwnProperty(idx)){
+                return opt.alteraRodape[idx];
+            }            
             // // E o campo monetario vamos somar a coluna e retornar o valor
             if(opt?.monetario && opt.monetario.includes(idx)){
                 const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
@@ -218,6 +192,7 @@ function formatarCabe(cabe, opt){
                 const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
                 return valor;
             }
+            
             // // Nao precisa de calculo retorne o valor da coluna
             return column.Header;
             
@@ -300,13 +275,13 @@ const Filtro = memo(({ isMobile, desativarPesquisaLenta, totalRegistros, filtro,
 
 const Tabela = (props) => {
   // Extraindo propriedades a serem usadas
-  const { percentual, styleTD, baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
-  const optTabela = { percentual, telefone, dataCustom, soma, data, monetario, envolver };
+  const { alteraRodape, percentual, styleTD, baixar_em_excel, telefone, soma, dataCustom, ocultarFiltro, ocultarColuna, styleCabe, styleRodape, style, styleCorpo, sxCabecalho, calcularRodape, data, monetario, envolver, tamanho, render, cabe, corpo, styleTrSelecionado } = props;
+  const optTabela = { percentual, telefone, dataCustom, soma, data, monetario, envolver, alteraRodape };
   
   const [ buscaColuna, setBuscaColuna ] = useState('');
   const [pagina, setPagina] = useState(1);
   
-  const columns = useMemo(()=> formatarCabe(cabe, { telefone, dataCustom, soma, data, monetario, envolver, percentual }), [ percentual, telefone, dataCustom, soma, data, monetario, envolver, cabe ]);
+  const columns = useMemo(()=> formatarCabe(cabe, { telefone, dataCustom, soma, data, monetario, envolver, percentual, alteraRodape }), [ alteraRodape, percentual, telefone, dataCustom, soma, data, monetario, envolver, cabe ]);
   const registros = useMemo(()=> formatarCorpo(corpo.length > 0 ? corpo : [ cabe.map(ele=> '--') ] ), [corpo, cabe]);
   // Verifica se o corpo esta sofrendo atualizacao
   useEffect(()=>{
@@ -731,6 +706,8 @@ Tabela.propTypes = {
     percentual: PropTypes.arrayOf(PropTypes.number),
     /** Define estilizacao para as celulas */
     styleTD: PropTypes.object,
+    /** Esta props recbe um objeto indexado que permite sobreescrever o rodape */
+    alteraRodape: PropTypes.objectOf(PropTypes.number),
 }
 //
 Tabela.defaultProps = {
