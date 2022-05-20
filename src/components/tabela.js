@@ -180,7 +180,11 @@ function formatarCabe(cabe, opt){
         Footer: ({rows, column})=>{
             // Verifica se tem uma sobreescricao de valor para o rodape
             if(opt?.alteraRodape && opt.alteraRodape?.hasOwnProperty(idx)){
-                return opt.alteraRodape[idx];
+                return formatarValores(opt.alteraRodape[idx], idx, opt);
+                // if(opt?.monetario && opt.monetario.includes(idx)){
+                //     return converter(opt.alteraRodape[idx]);
+                // }
+                // return opt.alteraRodape[idx];
             }            
             // // E o campo monetario vamos somar a coluna e retornar o valor
             if(opt?.monetario && opt.monetario.includes(idx)){

@@ -73,6 +73,6 @@ AlteraRodape.args = {
   cabe: cabe,
   corpo: corpo,
   calcularRodape: true,
-  alteraRodape: {1: 'CUSTOMIZADO', 2: 'EU CUSTOMIZEI', 3: 'TOTALMENTE CUSTOMIZADO'},
+  alteraRodape: {1: 'CUSTOMIZADO', 2: 'EU CUSTOMIZEI', 3: 10},
   monetario: [3,4,5,6,7,8,9,10,11,12,13],
 }
