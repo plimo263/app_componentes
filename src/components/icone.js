@@ -73,6 +73,9 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import MedicationIcon from '@mui/icons-material/Medication';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import FacebookIcon from '@mui/icons-material/Facebook';
+
 
 
 const Icone = (props) => {
@@ -223,6 +226,11 @@ const Icone = (props) => {
             return <MedicationIcon {...props} />;
         case 'ArrowBack':
             return <ArrowBackIcon {...props} />;
+        case 'ReceiptLong':
+            return <ReceiptLongIcon {...props} />;
+        case 'Facebook':
+            return <FacebookIcon {...props} />;
+
                 
         default:
             return '';
@@ -240,7 +248,8 @@ const TIPO_ICONES = [
     'SelfImprovement', 'TableView', 'ArrowBackIos', 'EmojiPeople', 'Home',
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
-    'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack',
+    'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
+    'Facebook',
 ];
 
 Icone.propTypes = {
