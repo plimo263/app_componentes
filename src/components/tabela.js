@@ -163,48 +163,52 @@ function formatarCabe(cabe, opt){
             accessor: 'id',
             disableGlobalFilter: true,
         },
-        ...cabe.map((ele,idx)=> ({
-        Header: ele,
-        accessor: idx.toString(),
-        
-        Cell: ({ value, row })=>{
+        ...cabe.map((ele,idx)=>{
 
-            /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
-            if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
-                return opt.envolver[idx](value, row.id, row);
+            const _OBJ = {
+                Header: ele,
+                accessor: idx.toString(),
+                Cell: ({ value, row })=>{
+                    /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
+                    if(opt?.envolver && opt.envolver?.hasOwnProperty(idx) ){
+                        return opt.envolver[idx](value, row.id, row);
+                    }
+                    return formatarValores(value, idx, opt);
+                },
+                Footer: ({rows, column})=>{
+                    // Verifica se tem uma sobreescricao de valor para o rodape
+                    if(opt?.alteraRodape && opt.alteraRodape?.hasOwnProperty(idx)){
+                        return formatarValores(opt.alteraRodape[idx], idx, opt);
+                        // if(opt?.monetario && opt.monetario.includes(idx)){
+                        //     return converter(opt.alteraRodape[idx]);
+                        // }
+                        // return opt.alteraRodape[idx];
+                    }            
+                    // // E o campo monetario vamos somar a coluna e retornar o valor
+                    if(opt?.monetario && opt.monetario.includes(idx)){
+                        const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
+                         return converter(valor);
+                    }
+                    // Se o indice da soma for acionado
+                    if(opt?.soma && opt.soma.includes(idx)){
+                        const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
+                        return valor;
+                    }
+                    // // Nao precisa de calculo retorne o valor da coluna
+                    return column.Header;
+                }
             }
-            
-            return formatarValores(value, idx, opt);
-
-        },
-        Footer: ({rows, column})=>{
-            // Verifica se tem uma sobreescricao de valor para o rodape
-            if(opt?.alteraRodape && opt.alteraRodape?.hasOwnProperty(idx)){
-                return formatarValores(opt.alteraRodape[idx], idx, opt);
-                // if(opt?.monetario && opt.monetario.includes(idx)){
-                //     return converter(opt.alteraRodape[idx]);
-                // }
-                // return opt.alteraRodape[idx];
-            }            
-            // // E o campo monetario vamos somar a coluna e retornar o valor
+            // Verifica se o opt tem os atributos que sao ordenaveis como numero
             if(opt?.monetario && opt.monetario.includes(idx)){
-                const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
-                 return converter(valor);
+                _OBJ.sortType = (a,b)=> a.values[idx] > b.values[idx] ? 1 : -1;
             }
-            // Se o indice da soma for acionado
-            if(opt?.soma && opt.soma.includes(idx)){
-                const valor = _.sum(_.map(rows, r=> r.values[idx] ));        
-                return valor;
+            // Se for percentual
+            if(opt?.percentual && opt.percentual.includes(idx)){
+                _OBJ.sortType = (a,b)=> a.values[idx] > b.values[idx] ? 1 : -1;
             }
-            
-            // // Nao precisa de calculo retorne o valor da coluna
-            return column.Header;
-            
-            
-        } 
-        
+
+            return _OBJ;
         })
-        )
     ]
 }
 // Funcao para formatar o corpo
