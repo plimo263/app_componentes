@@ -521,12 +521,13 @@ const Tabela = (props) => {
     </>
   )
 }
+const sxIcone = {fontSize: 12 };
 // Componente do cabecalho
 const ThCabe  = memo( ({ column, isSorted, isSortedDesc, sxCabecalho })=>(
     <th {...column.getHeaderProps(column.getSortByToggleProps())}>
         <Paper sx={sxCabecalho} elevation={2}>
             <Stack alignItems='center' direction='row' justifyContent='center'>
-                {isSorted ? (isSortedDesc ? <KeyboardArrowDownIcon />: <KeyboardArrowUpIcon />) : <UnfoldMoreIcon />}
+                {isSorted ? (isSortedDesc ? <KeyboardArrowDownIcon sx={sxIcone} />: <KeyboardArrowUpIcon sx={sxIcone} />) : <UnfoldMoreIcon sx={sxIcone} />}
                 {column.render('Header')}
             </Stack>
         </Paper>
