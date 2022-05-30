@@ -1,15 +1,15 @@
 import React, { memo } from 'react'
 import PropTypes from 'prop-types'
-import { Paper, Box, styled, Stack, Drawer, SwipeableDrawer } from '@mui/material';
+import { Paper, Box, styled, Drawer, SwipeableDrawer } from '@mui/material';
 //
 const Puller = styled(Box)(({ theme }) => ({
     width: 40,
     height: 8,
     backgroundColor:  theme.palette.primary.main,
     borderRadius: 4,
-    position: 'absolute',
-    top: 8,
-    left: 'calc(50% - 20px)',
+    marginTop: 8,
+    marginBottom: 8,
+    marginLeft: 'calc(50% - 20px)',
   }));
   
 
@@ -19,11 +19,9 @@ const Deslizavel = ({ corpo, fecharDrawer })=>(
       open={Boolean(corpo)}
       onClose={fecharDrawer}
     >
-        <Stack direction='row' sx={{zIndex: 1000, backgroundColor: 'background.paper',position: 'sticky', top: 0, height: 24, w: '100%'}}>
-            <Paper>
-                <Puller />
-            </Paper>
-        </Stack>
+        <Paper elevation={3} sx={{ borderRadius: 0, mb: 1, zIndex: 1000, position: 'sticky', top: 0, }}>
+            <Puller />
+        </Paper>
       {corpo}
     </SwipeableDrawer>
 )

@@ -77,6 +77,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import CircleIcon from '@mui/icons-material/Circle';
+import ScienceIcon from '@mui/icons-material/Science';
 
 
 
@@ -236,7 +237,8 @@ const Icone = (props) => {
             return <AddIcCallIcon {...props} />;
         case 'Circle':
             return <CircleIcon {...props} />;
-
+        case 'Science':
+            return <ScienceIcon {...props} />;
                 
         default:
             return '';
@@ -255,7 +257,7 @@ const TIPO_ICONES = [
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
-    'Facebook', 'AddIcCall', 'Circle',
+    'Facebook', 'AddIcCall', 'Circle', 'Science',
 ];
 
 Icone.propTypes = {
