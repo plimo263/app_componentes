@@ -78,6 +78,10 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import CircleIcon from '@mui/icons-material/Circle';
 import ScienceIcon from '@mui/icons-material/Science';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import AbcIcon from '@mui/icons-material/Abc';
+import LooksOneIcon from '@mui/icons-material/LooksOne';
 
 
 
@@ -239,6 +243,14 @@ const Icone = (props) => {
             return <CircleIcon {...props} />;
         case 'Science':
             return <ScienceIcon {...props} />;
+        case 'ArrowUpward':
+            return <ArrowUpwardIcon {...props} />;
+        case 'ArrowDownward':
+            return <ArrowDownwardIcon {...props} />;
+        case 'Abc':
+            return <AbcIcon {...props} />;
+        case 'LooksOne':
+            return <LooksOneIcon {...props} />;
                 
         default:
             return '';
@@ -257,7 +269,7 @@ const TIPO_ICONES = [
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
-    'Facebook', 'AddIcCall', 'Circle', 'Science',
+    'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne',
 ];
 
 Icone.propTypes = {

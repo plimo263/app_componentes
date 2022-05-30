@@ -30,7 +30,7 @@ function TabPanel(props) {
   }
 
 
-const Tab = ({ corpo, cabe }) => {
+const Tab = ({ corpo, cabe, verBotaoControle }) => {
     const [pagina, setPagina ] = useState(0);
     
     return (
@@ -39,7 +39,7 @@ const Tab = ({ corpo, cabe }) => {
             <Tabs 
               variant="scrollable"
               scrollButtons
-              allowScrollButtonsMobile
+              allowScrollButtonsMobile={verBotaoControle}
               
               value={pagina} onChange={(evt, valor)=> setPagina(valor)}>
                 {cabe.map((ele,idx)=>(
@@ -61,6 +61,8 @@ Tab.propTypes = {
   corpo: PropTypes.array.isRequired,
   /** Um array que represente o corpo de cada aba (o tamanho do array do corpo deve ser o mesmo do de cabe) */
   cabe: PropTypes.array.isRequired,
+  /** Um boleano que determina se teremos visiveis os botoes de controle de avanço/recuo da tabs */
+  verBotaoControle: PropTypes.bool,
 }
 
 export default Tab;
