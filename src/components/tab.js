@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types'
 import { Box, Container, Tab as Aba, Tabs } from '@mui/material';
 
@@ -30,8 +30,13 @@ function TabPanel(props) {
   }
 
 
-const Tab = ({ corpo, cabe, verBotaoControle }) => {
-    const [pagina, setPagina ] = useState(0);
+const Tab = ({ indice, setIndice, corpo, cabe, verBotaoControle }) => {
+    const [pagina, setPagina ] = useState(indice);
+    // Funcao para manipular os indices
+    const fnIndice = useCallback((valor)=>{
+      setPagina(valor);
+      setIndice(valor);
+    }, [setPagina, setIndice]);
     
     return (
         <Container disableGutters disablePadding maxWidth={false} >
@@ -41,7 +46,7 @@ const Tab = ({ corpo, cabe, verBotaoControle }) => {
               scrollButtons
               allowScrollButtonsMobile={verBotaoControle}
               
-              value={pagina} onChange={(evt, valor)=> setPagina(valor)}>
+              value={pagina} onChange={(evt, valor)=> fnIndice(valor) }>
                 {cabe.map((ele,idx)=>(
                     <Aba label={ele} key={idx} {...a11yProps(idx)} />
                 ))}
@@ -56,7 +61,16 @@ const Tab = ({ corpo, cabe, verBotaoControle }) => {
     ) 
 }
 //
+Tab.defaultProps = {
+  indice: 0,
+  setIndice: ()=>{},
+}
+//
 Tab.propTypes = {
+  /** Um inteiro que determina o indice da aba que vamos iniciar */
+  indice: PropTypes.number,
+  /** Uma função de callback responsavel por alterar o indice  */
+  setIndice: PropTypes.func,
   /** Um array que represente o cabecalho  */
   corpo: PropTypes.array.isRequired,
   /** Um array que represente o corpo de cada aba (o tamanho do array do corpo deve ser o mesmo do de cabe) */
