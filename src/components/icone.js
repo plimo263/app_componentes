@@ -82,6 +82,8 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AbcIcon from '@mui/icons-material/Abc';
 import LooksOneIcon from '@mui/icons-material/LooksOne';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 
 
@@ -251,6 +253,10 @@ const Icone = (props) => {
             return <AbcIcon {...props} />;
         case 'LooksOne':
             return <LooksOneIcon {...props} />;
+        case 'ArrowDropUp':
+            return <ArrowDropUpIcon {...props} />;
+        case 'ArrowDropDown':
+            return <ArrowDropDownIcon {...props} />;
                 
         default:
             return '';
@@ -269,7 +275,8 @@ const TIPO_ICONES = [
     'Handshake', 'ShoppingBag', 'QrCode', 'AttachMoney', 'Receipt', 'Percent', 'SwapVert', 'Check', 'AutoGraph',
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
-    'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne',
+    'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
+    'ArrowDropUp',
 ];
 
 Icone.propTypes = {
