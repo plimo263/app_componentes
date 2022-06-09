@@ -23,6 +23,16 @@ import RadioForm from "./radio-form";
 import { Caption, Subtitle2 } from "./tipografia";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
+// Funcao para formatar ao select
+function formatarParaSelect(arr, concatRotulo = ''){
+  const newArr = arr.map((ele)=>({
+       label: `${Array.isArray(ele) ? ele[1] : ele}${concatRotulo}`,
+       value: Array.isArray(ele) ? ele[0] : ele,
+       key: Array.isArray(ele) ? ele[0] : ele,
+  }))
+  return newArr;
+}
+
 // Text, Textarea, number
 const EntradaFormNormal = memo((props) => {
   let maskToMoney;
@@ -245,6 +255,11 @@ const ConnectForm = (props) => {
               : defaultChecked
               ? defaultChecked
               : "";
+          // Se for um select com itemDefaultValue preenchido formate-o
+          if(type === "select" && Array.isArray(itemDefaultValue) && ele.autoFormat === true ){
+            itemDefaultValue = formatarParaSelect(itemDefaultValue);
+            
+          }
           let length = maxLength || counter ? watch(name)?.length : null;
           // Se tiver a props exibirSe, precisamos verificar o valor
           const chaveExibir = ele.exibirSe ? exibirSe.ouvir : null;
@@ -402,7 +417,7 @@ const ConnectForm = (props) => {
                   sx={{ color: buttonProps?.iconColor }}
                 />
               ) : (
-                <Icone icone="Save" sx={{ color: buttonProps?.iconColor }} />
+                <Icone icone={buttonProps?.icon || "Save"} sx={{ color: buttonProps?.iconColor }} />
               )
             }
           >
