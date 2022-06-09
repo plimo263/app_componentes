@@ -876,8 +876,8 @@ const BaixarEmExcel = memo(({ cabe, corpo, optTabela, URL }) => {
         sx={{
           borderRadius: "100%",
           mr: 1,
-          backgroundColor: (theme) => theme.palette.primary.main,
-          color: (theme) => theme.palette.primary.contrastText,
+          backgroundColor: (theme) => theme.palette.secondary.main,
+          color: (theme) => theme.palette.secondary.contrastText,
         }}
         title="Clique para baixar a planilha em Excel"
       >
