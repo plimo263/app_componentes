@@ -85,7 +85,11 @@ import LooksOneIcon from '@mui/icons-material/LooksOne';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
-
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import ReportIcon from '@mui/icons-material/Report';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 
 
 const Icone = (props) => {
@@ -260,6 +264,16 @@ const Icone = (props) => {
             return <ArrowDropDownIcon {...props} />;
         case 'ThumbsUpDown':
             return <ThumbsUpDownIcon {...props} />;
+        case 'EmojiEvents':
+            return <EmojiEventsIcon {...props} />;
+        case 'AttachFile':
+            return <AttachFileIcon {...props} />;
+        case 'Report':
+            return <ReportIcon {...props} />;
+        case 'ArrowForward':
+            return <ArrowForwardIcon {...props} />;
+        case 'MilitaryTech':
+            return <MilitaryTechIcon {...props} />;
                 
         default:
             return '';
@@ -279,7 +293,7 @@ const TIPO_ICONES = [
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
-    'ArrowDropUp', 'ThumbsUpDown',
+    'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward',
 ];
 
 Icone.propTypes = {

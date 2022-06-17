@@ -71,6 +71,7 @@ const EntradaFormNormal = memo((props) => {
         inputProps={{
           ...props.extraProps?.inputProps,
           maxLength: props.maxLength ? props.maxLength : null,
+          multiple: props.multiple || false,
         }}
         InputProps={{
           startAdornment: props.icon && <Icone icone={props.icon} />,
