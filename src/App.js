@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Typography } from '@mui/material';
 import Tabela from './components/tabela';
-import DATA from './data/MOCK_DATA2.json'
+import DATA from './data/MOCK_DATA3.json'
 import { lightGreen } from '@mui/material/colors'
 // import { format, parseISO } from 'date-fns';
 
