@@ -90,6 +90,8 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ReportIcon from '@mui/icons-material/Report';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import PersonOffIcon from '@mui/icons-material/PersonOff';
+import EditOffIcon from '@mui/icons-material/EditOff';
 
 
 const Icone = (props) => {
@@ -274,6 +276,10 @@ const Icone = (props) => {
             return <ArrowForwardIcon {...props} />;
         case 'MilitaryTech':
             return <MilitaryTechIcon {...props} />;
+        case 'PersonOff':
+            return <PersonOffIcon {...props} />;
+        case 'EditOff':
+            return <EditOffIcon {...props} />;
                 
         default:
             return '';
@@ -293,7 +299,8 @@ const TIPO_ICONES = [
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
-    'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward',
+    'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
+    'EditOff'
 ];
 
 Icone.propTypes = {

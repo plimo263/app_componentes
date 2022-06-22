@@ -25,7 +25,8 @@ const TIPO_ICONES = [
     'PointOfSale', 'Copyright', 'HighlightOff', 'BarChart', 'ShowChart', 'Rule', 'Person', 'School', 'Celebration', 'Cake', 
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
-    'ArrowDropUp', 'ThumbsUpDown',
+    'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
+    'EditOff'
 ];
 
 BotaoIcone.propTypes = {
