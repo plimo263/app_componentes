@@ -92,6 +92,11 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import EditOffIcon from '@mui/icons-material/EditOff';
+import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
+import CarRentalIcon from '@mui/icons-material/CarRental';
+import ViewWeekIcon from '@mui/icons-material/ViewWeek';
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+
 
 
 const Icone = (props) => {
@@ -279,8 +284,15 @@ const Icone = (props) => {
         case 'PersonOff':
             return <PersonOffIcon {...props} />;
         case 'EditOff':
-            return <EditOffIcon {...props} />;
-                
+            return <EditOffIcon {...props} />;   
+        case 'PrecisionManufacturing':
+            return <PrecisionManufacturingIcon {...props} />;
+        case 'CarRental':
+            return <CarRentalIcon {...props} />;
+        case 'ViewWeek':
+            return <ViewWeekIcon {...props} />;
+        case 'CancelPresentation':
+            return <CancelPresentationIcon {...props} />;    
         default:
             return '';
     }
@@ -300,7 +312,7 @@ const TIPO_ICONES = [
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
-    'EditOff'
+    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation'
 ];
 
 Icone.propTypes = {
