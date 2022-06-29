@@ -24,12 +24,12 @@ import { Caption, Subtitle2 } from "./tipografia";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 // Funcao para formatar ao select
-function formatarParaSelect(arr, concatRotulo = ''){
-  const newArr = arr.map((ele)=>({
-       label: `${Array.isArray(ele) ? ele[1] : ele}${concatRotulo}`,
-       value: Array.isArray(ele) ? ele[0] : ele,
-       key: Array.isArray(ele) ? ele[0] : ele,
-  }))
+function formatarParaSelect(arr, concatRotulo = "") {
+  const newArr = arr.map((ele) => ({
+    label: `${Array.isArray(ele) ? ele[1] : ele}${concatRotulo}`,
+    value: Array.isArray(ele) ? ele[0] : ele,
+    key: Array.isArray(ele) ? ele[0] : ele,
+  }));
   return newArr;
 }
 
@@ -234,6 +234,9 @@ const ConnectForm = (props) => {
   const { watch, control, wait, schema, buttonProps, exibirSe } = props;
   const { errors, schemaMessageError, handleSubmit, onSubmit } = props;
 
+  // Veifica se tem o noCenter
+  const noCenter = buttonProps && buttonProps.noCenter;
+
   return (
     <>
       <Grid container>
@@ -257,9 +260,12 @@ const ConnectForm = (props) => {
               ? defaultChecked
               : "";
           // Se for um select com itemDefaultValue preenchido formate-o
-          if(type === "select" && Array.isArray(itemDefaultValue) && ele.autoFormat === true ){
+          if (
+            type === "select" &&
+            Array.isArray(itemDefaultValue) &&
+            ele.autoFormat === true
+          ) {
             itemDefaultValue = formatarParaSelect(itemDefaultValue);
-            
           }
           let length = maxLength || counter ? watch(name)?.length : null;
           // Se tiver a props exibirSe, precisamos verificar o valor
@@ -399,36 +405,71 @@ const ConnectForm = (props) => {
             </Grid>
           );
         })}
-      </Grid>
-      <Grid container sx={{ my: 1 }}>
-        <Hidden smDown>
-          <Grid item md={3} />
-        </Hidden>
-        <Grid item xs={12} md={6}>
-          <Button
-            disabled={wait}
-            fullWidth={true}
-            variant="contained"
-            {...buttonProps}
-            onClick={handleSubmit(onSubmit)}
-            startIcon={
-              wait ? (
-                <CircularProgress
-                  size={20}
-                  sx={{ color: buttonProps?.iconColor }}
-                />
-              ) : (
-                <Icone icone={buttonProps?.icon || "Save"} sx={{ color: buttonProps?.iconColor }} />
-              )
-            }
+        {noCenter && (
+          <Grid
+            item
+            {...buttonProps.grid}
+            sx={{ alignSelf: "flex-end", p: 0.5, ...buttonProps.sx }}
           >
-            {buttonProps?.label ? buttonProps?.label : "ENVIAR"}
-          </Button>
-        </Grid>
-        <Hidden smDown>
-          <Grid item md={3} />
-        </Hidden>
+            <Button
+              disabled={wait}
+              fullWidth={true}
+              variant="contained"
+              {...buttonProps}
+              onClick={handleSubmit(onSubmit)}
+              startIcon={
+                wait ? (
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: buttonProps?.iconColor }}
+                  />
+                ) : (
+                  <Icone
+                    icone={buttonProps?.icon || "Save"}
+                    sx={{ color: buttonProps?.iconColor }}
+                  />
+                )
+              }
+            >
+              {buttonProps?.label ? buttonProps?.label : "ENVIAR"}
+            </Button>
+          </Grid>
+        )}
       </Grid>
+      {!noCenter && (
+        <Grid container sx={{ my: 1 }}>
+          <Hidden smDown>
+            <Grid item md={3} />
+          </Hidden>
+          <Grid item xs={12} md={6}>
+            <Button
+              disabled={wait}
+              fullWidth={true}
+              variant="contained"
+              {...buttonProps}
+              onClick={handleSubmit(onSubmit)}
+              startIcon={
+                wait ? (
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: buttonProps?.iconColor }}
+                  />
+                ) : (
+                  <Icone
+                    icone={buttonProps?.icon || "Save"}
+                    sx={{ color: buttonProps?.iconColor }}
+                  />
+                )
+              }
+            >
+              {buttonProps?.label ? buttonProps?.label : "ENVIAR"}
+            </Button>
+          </Grid>
+          <Hidden smDown>
+            <Grid item md={3} />
+          </Hidden>
+        </Grid>
+      )}
     </>
   );
 };
@@ -620,6 +661,8 @@ EntradaForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   /** Um objeto com opções para customizar o botao */
   buttonProps: PropTypes.shape({
+    noCenter: PropTypes.bool,
+    sx: PropTypes.object,
     label: PropTypes.string,
     title: PropTypes.string,
     extraProps: PropTypes.object,
