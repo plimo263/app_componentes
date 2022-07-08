@@ -96,7 +96,7 @@ import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturi
 import CarRentalIcon from '@mui/icons-material/CarRental';
 import ViewWeekIcon from '@mui/icons-material/ViewWeek';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-
+import SavingsIcon from '@mui/icons-material/Savings';
 
 
 const Icone = (props) => {
@@ -292,7 +292,9 @@ const Icone = (props) => {
         case 'ViewWeek':
             return <ViewWeekIcon {...props} />;
         case 'CancelPresentation':
-            return <CancelPresentationIcon {...props} />;    
+            return <CancelPresentationIcon {...props} />;
+        case 'Savings':
+            return <SavingsIcon {...props} />;
         default:
             return '';
     }
@@ -312,7 +314,7 @@ const TIPO_ICONES = [
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
-    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation'
+    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings',
 ];
 
 Icone.propTypes = {
