@@ -30,7 +30,7 @@ function TabPanel(props) {
   }
 
 
-const Tab = ({ indice, setIndice, corpo, cabe, verBotaoControle }) => {
+const Tab = ({ indice, cabeInativo, setIndice, corpo, cabe, verBotaoControle }) => {
     const [pagina, setPagina ] = useState(indice);
     // Funcao para manipular os indices
     const fnIndice = useCallback((valor)=>{
@@ -48,7 +48,7 @@ const Tab = ({ indice, setIndice, corpo, cabe, verBotaoControle }) => {
               
               value={pagina} onChange={(evt, valor)=> fnIndice(valor) }>
                 {cabe.map((ele,idx)=>(
-                    <Aba label={ele} key={idx} {...a11yProps(idx)} />
+                    <Aba disabled={cabeInativo.includes(idx)} label={ele} key={idx} {...a11yProps(idx)} />
                 ))}
             </Tabs>
             
@@ -64,6 +64,7 @@ const Tab = ({ indice, setIndice, corpo, cabe, verBotaoControle }) => {
 Tab.defaultProps = {
   indice: 0,
   setIndice: ()=>{},
+  cabeInativo: [],
 }
 //
 Tab.propTypes = {
@@ -75,6 +76,8 @@ Tab.propTypes = {
   corpo: PropTypes.array.isRequired,
   /** Um array que represente o corpo de cada aba (o tamanho do array do corpo deve ser o mesmo do de cabe) */
   cabe: PropTypes.array.isRequired,
+  /** Um array com os indices das abas que serão desabilitadas no clique */
+  cabeInativo: PropTypes.arrayOf(PropTypes.number),
   /** Um boleano que determina se teremos visiveis os botoes de controle de avanço/recuo da tabs */
   verBotaoControle: PropTypes.bool,
 }
