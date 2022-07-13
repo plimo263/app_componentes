@@ -97,6 +97,8 @@ import CarRentalIcon from '@mui/icons-material/CarRental';
 import ViewWeekIcon from '@mui/icons-material/ViewWeek';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import SavingsIcon from '@mui/icons-material/Savings';
+import MaleIcon from '@mui/icons-material/Male';
+import FemaleIcon from '@mui/icons-material/Female';
 
 
 const Icone = (props) => {
@@ -295,6 +297,10 @@ const Icone = (props) => {
             return <CancelPresentationIcon {...props} />;
         case 'Savings':
             return <SavingsIcon {...props} />;
+        case 'Male':
+            return <MaleIcon {...props} />;
+        case 'Female':
+            return <FemaleIcon {...props} />;
         default:
             return '';
     }
@@ -314,7 +320,7 @@ const TIPO_ICONES = [
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
-    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings',
+    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female',
 ];
 
 Icone.propTypes = {
