@@ -41,6 +41,7 @@ import {
   Container,
   FormControlLabel,
   styled,
+  ButtonBase,
 } from "@mui/material";
 /*
  * Um componente que faz utilização de uma linda tabela, customizavel com recursos como:
@@ -869,20 +870,19 @@ const BaixarEmExcel = memo(({ cabe, corpo, optTabela, URL }) => {
             }
           />
         ))}
-      <IconButton
-        size="small"
-        disableRipple
-        onClick={() => setIntencaoBaixar(true)}
-        sx={{
-          borderRadius: "100%",
-          mr: 1,
-          backgroundColor: (theme) => theme.palette.secondary.main,
-          color: (theme) => theme.palette.secondary.contrastText,
-        }}
-        title="Clique para baixar a planilha em Excel"
+      <ButtonBase
+      onClick={() => setIntencaoBaixar(true)}
+      sx={{
+        borderRadius: "100%",
+        mr: 1,
+        p: .5,
+        backgroundColor: (theme) => theme.palette.primary.main,
+        color: (theme) => theme.palette.primary.contrastText,
+      }}
+      title="Clique para baixar a planilha em Excel"
       >
-        <FileDownloadIcon />
-      </IconButton>
+      <FileDownloadIcon />
+      </ButtonBase>
     </>
   );
 });
