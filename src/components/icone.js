@@ -99,6 +99,7 @@ import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import SavingsIcon from '@mui/icons-material/Savings';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
+import DateRangeIcon from '@mui/icons-material/DateRange';
 
 
 const Icone = (props) => {
@@ -301,6 +302,8 @@ const Icone = (props) => {
             return <MaleIcon {...props} />;
         case 'Female':
             return <FemaleIcon {...props} />;
+        case 'DateRange':
+            return <DateRangeIcon {...props} />;
         default:
             return '';
     }
@@ -320,7 +323,7 @@ const TIPO_ICONES = [
     'EventBusy', 'Event', 'CurrencyExchange', 'Remove', 'AddShoppingCart', 'Medication', 'ArrowBack', 'ReceiptLong',
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
-    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female',
+    'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female', 'DateRange',
 ];
 
 Icone.propTypes = {
