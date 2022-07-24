@@ -14,6 +14,8 @@ export default {
         <p>{`Graficos disponiveis:`}</p>
         <ul>
           <li>{` GraficoBarra `}</li>
+          <li>{` GraficoBarraMultipla `}</li>
+          <li>{` GraficoLinha `}</li>
           <li>{` GraficoPizzaComLegenda `}</li>
         </ul>
         <p>{`Props para os graficos:`}</p>
