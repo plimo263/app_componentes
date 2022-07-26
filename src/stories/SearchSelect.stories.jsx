@@ -34,3 +34,28 @@ Padrao.story = {
     },
   },
 };
+
+export const UsandoSelect = Template.bind({});
+
+UsandoSelect.args = {
+  types: [
+    { id: 1, node: <Icone icone="Person" />, title: "Filtro por usuario" },
+    { id: 2, node: <Icone icone="ListAlt" />, title: "Filtro por menu" },
+    { id: 3, node: <Icone icone="Edit" />, title: "Filtro por edição" },
+  ],
+  objectSelect: {
+    1: ["FULANO", "BELTRANO", "CICLANO"],
+  },
+  onChange: (index, value) => {
+    console.log(index);
+    console.log(value);
+  },
+};
+
+UsandoSelect.story = {
+  parameters: {
+    docs: {
+      storyDescription: "Configuração mínima .",
+    },
+  },
+};

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Select from "./select";
 import PropTypes from "prop-types";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {
@@ -10,6 +11,7 @@ import {
   ButtonBase,
   Typography,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import { useDebounce } from "react-use";
 
@@ -21,6 +23,7 @@ function SearchSelect({
   debounce,
   placeholder,
   disableDebounce,
+  objectSelect,
 }) {
   // Determina o nó selecionado
   const [nodeDefault, setNodeDefault] = useState(
@@ -85,14 +88,24 @@ function SearchSelect({
           <ArrowDropDownIcon />
         </Paper>
       </ButtonBase>
-      <TextField
-        size="small"
-        defaultValue={value}
-        fullWidth
-        variant="outlined"
-        onChange={onChangeTextField}
-        placeholder={placeholder}
-      />
+      {objectSelect && objectSelect.hasOwnProperty(nodeDefault) ? (
+        <Box sx={{ flex: 1 }}>
+          <Select
+            options={objectSelect[nodeDefault]}
+            onChange={(e) => onChange(nodeDefault, e.value)}
+            autoFormat={true}
+          />
+        </Box>
+      ) : (
+        <TextField
+          size="small"
+          defaultValue={value}
+          fullWidth
+          variant="outlined"
+          onChange={onChangeTextField}
+          placeholder={placeholder}
+        />
+      )}
     </Stack>
   );
 }
@@ -124,6 +137,10 @@ SearchSelect.propTypes = {
   debounce: PropTypes.number,
   /** Um boleano que desativa a busca lenta tornando a pesquisa imediata */
   disableDebounce: PropTypes.bool,
+  /** Um objeto que contem um array chaveado pelo ID com todas as opções disponiveis na consulta. Caso isto seja enviado tem preferência sobre o modo de consulta com textfield. Sendo assim um select será exibido no lugar. EX: {1: ['MARCOS', 'FELIPE']}. Atenção é que, caso nenhum campo tenha sido chaveado o input é convertido para o textfield */
+  objectSelect: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  ),
 };
 
 export default SearchSelect;
