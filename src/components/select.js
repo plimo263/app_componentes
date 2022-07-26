@@ -42,6 +42,8 @@ const Select =  (props)=>{
         styles={selectStyles}
         {...props}
         options={valores}
+        menuPlacement="auto"
+        menuPosition='fixed'
 
     />
     )

@@ -91,9 +91,11 @@ function SearchSelect({
       {objectSelect && objectSelect.hasOwnProperty(nodeDefault) ? (
         <Box sx={{ flex: 1 }}>
           <Select
+            key={nodeDefault}
             options={objectSelect[nodeDefault]}
             onChange={(e) => onChange(nodeDefault, e.value)}
             autoFormat={true}
+            defaultValue=""
           />
         </Box>
       ) : (
