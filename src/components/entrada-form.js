@@ -305,7 +305,7 @@ const ConnectForm = (props) => {
               sx={{ p: 0.5, display: exibirCampoPorPadrao ? "block" : "none" }}
               item
               {...itemGrid}
-              key={idx}
+              key={name}
             >
               <Paper {...wrapperProps}>
                 {ele?.titulo && (
