@@ -100,7 +100,9 @@ import SavingsIcon from '@mui/icons-material/Savings';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import DateRangeIcon from '@mui/icons-material/DateRange';
-
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import MergeTypeIcon from '@mui/icons-material/MergeType';
+import AirlineStopsIcon from '@mui/icons-material/AirlineStops';
 
 const Icone = (props) => {
     switch(props.icone){
@@ -304,6 +306,12 @@ const Icone = (props) => {
             return <FemaleIcon {...props} />;
         case 'DateRange':
             return <DateRangeIcon {...props} />;
+        case 'AccountTree':
+            return <AccountTreeIcon {...props} />;
+        case 'MergeType':
+            return <MergeTypeIcon {...props} />;
+        case 'AirlineStops':
+            return <AirlineStopsIcon {...props} />;
         default:
             return '';
     }
@@ -324,6 +332,7 @@ const TIPO_ICONES = [
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
     'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female', 'DateRange',
+    'AccountTree', 'MergeType', 'AirlineStops',
 ];
 
 Icone.propTypes = {
