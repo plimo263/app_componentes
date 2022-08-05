@@ -178,8 +178,6 @@ MultipleSearchFilter.propTypes = {
   schemaValidator: PropTypes.object,
   /** Um objeto com o nome do campo e a mensagem de erro que deve ser exibida (vide EntradaForm) */
   schemaMessageError: PropTypes.object,
-  /** Um array com os campos do formulario que já devem ficar disponiveis por padrão */
-  defaultSelectedForm: PropTypes.array,
   /** Um boleano que determinar se o MultiSearchFilter esta ativo para receber novos filtros ou não */
   wait: PropTypes.bool.isRequired,
 };
