@@ -11,7 +11,6 @@ const  BotaoIcone = (props)=>{
         </IconButton>
     )
 }
-
 const TIPO_ICONES = [
     'Add', 'PostAdd', 'Menu', 'TrendingUp', 'Build', 'Computer', 'AccessTime', 
     'WbSunny', 'Phone', 'Visibility', 'Biotech', 'Engineering', 'SwapHoriz',
@@ -27,6 +26,9 @@ const TIPO_ICONES = [
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
     'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female', 'DateRange',
+    'AccountTree', 'MergeType', 'AirlineStops', 'People', 'ContactMail', 'RecordVoiceOver', 'Schedule', 
+    'AccountBalanceWallet', 'Mediation', 'Security', 'LinkedCamera', 'AdminPanelSettings', 'Analytics',
+    'ManageAccounts', 'ModelTraining', 'Paid', 'NoteAltOutlined', 'Mood'
 ];
 
 BotaoIcone.propTypes = {

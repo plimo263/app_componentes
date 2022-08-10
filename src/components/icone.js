@@ -103,6 +103,25 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import MergeTypeIcon from '@mui/icons-material/MergeType';
 import AirlineStopsIcon from '@mui/icons-material/AirlineStops';
+//
+import PeopleIcon from '@mui/icons-material/People';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
+//import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import MediationIcon from '@mui/icons-material/Mediation';
+import SecurityIcon from '@mui/icons-material/Security';
+import LinkedCameraIcon from '@mui/icons-material/LinkedCamera';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import ModelTrainingIcon from '@mui/icons-material/ModelTraining';
+import PaidIcon from '@mui/icons-material/Paid';
+import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
+import MoodIcon from '@mui/icons-material/Mood';
+
+
 
 const Icone = (props) => {
     switch(props.icone){
@@ -312,6 +331,37 @@ const Icone = (props) => {
             return <MergeTypeIcon {...props} />;
         case 'AirlineStops':
             return <AirlineStopsIcon {...props} />;
+        case 'People':
+            return <PeopleIcon {...props} />;
+        case 'ContactMail':
+            return <ContactMailIcon {...props} />;
+        case 'RecordVoiceOver':
+            return <RecordVoiceOverIcon {...props} />;
+        case 'Schedule':
+            return <ScheduleIcon {...props} />;
+        case 'AccountBalanceWallet':
+            return <AccountBalanceWalletIcon {...props} />;
+        case 'Mediation':
+            return <MediationIcon {...props} />;
+        case 'Security':
+            return <SecurityIcon {...props} />;
+        case 'LinkedCamera':
+            return <LinkedCameraIcon {...props} />;
+        case 'AdminPanelSettings':
+            return <AdminPanelSettingsIcon {...props} />;
+        case 'Analytics':
+            return <AnalyticsIcon {...props} />;
+        case 'ManageAccounts':
+            return <ManageAccountsIcon {...props} />;
+        case 'ModelTraining':
+            return <ModelTrainingIcon {...props} />;
+        case 'Paid':
+            return <PaidIcon {...props} />;
+        case 'NoteAltOutlined':
+            return <NoteAltOutlinedIcon {...props} />;
+        case 'Mood':
+            return <MoodIcon {...props} />;
+        
         default:
             return '';
     }
@@ -332,7 +382,9 @@ const TIPO_ICONES = [
     'Facebook', 'AddIcCall', 'Circle', 'Science','ArrowUpward', 'ArrowDownward', 'Abc', 'LooksOne', 'ArrowDropDown',
     'ArrowDropUp', 'ThumbsUpDown', 'EmojiEvents', 'AttachFile', 'Report', 'ArrowForward', 'MilitaryTech', 'PersonOff',
     'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female', 'DateRange',
-    'AccountTree', 'MergeType', 'AirlineStops',
+    'AccountTree', 'MergeType', 'AirlineStops', 'People', 'ContactMail', 'RecordVoiceOver', 'Schedule', 
+    'AccountBalanceWallet', 'Mediation', 'Security', 'LinkedCamera', 'AdminPanelSettings', 'Analytics',
+    'ManageAccounts', 'ModelTraining', 'Paid', 'NoteAltOutlined', 'Mood'
 ];
 
 Icone.propTypes = {
