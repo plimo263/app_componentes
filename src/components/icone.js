@@ -120,7 +120,7 @@ import ModelTrainingIcon from '@mui/icons-material/ModelTraining';
 import PaidIcon from '@mui/icons-material/Paid';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import MoodIcon from '@mui/icons-material/Mood';
-
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 
 const Icone = (props) => {
@@ -361,7 +361,8 @@ const Icone = (props) => {
             return <NoteAltOutlinedIcon {...props} />;
         case 'Mood':
             return <MoodIcon {...props} />;
-        
+        case 'PictureAsPdf':
+            return <PictureAsPdfIcon {...props} />;        
         default:
             return '';
     }
@@ -384,7 +385,7 @@ const TIPO_ICONES = [
     'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female', 'DateRange',
     'AccountTree', 'MergeType', 'AirlineStops', 'People', 'ContactMail', 'RecordVoiceOver', 'Schedule', 
     'AccountBalanceWallet', 'Mediation', 'Security', 'LinkedCamera', 'AdminPanelSettings', 'Analytics',
-    'ManageAccounts', 'ModelTraining', 'Paid', 'NoteAltOutlined', 'Mood'
+    'ManageAccounts', 'ModelTraining', 'Paid', 'NoteAltOutlined', 'Mood', 'PictureAsPdf'
 ];
 
 Icone.propTypes = {
