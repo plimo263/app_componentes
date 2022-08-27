@@ -22,6 +22,10 @@ const selectStyles = {
         ...styles,
         color: 'black',
     }),
+    menuPortal: (styles)=>({
+        ...styles,
+        zIndex: 1000,
+    }),
     menu: (styles)=>({
         ...styles,
         zIndex: 1000,
