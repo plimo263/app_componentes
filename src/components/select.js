@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import PropTypes from 'prop-types'
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { useTheme } from '@mui/material';
 
 const animetedComponents = makeAnimated();
 
@@ -32,14 +33,88 @@ const selectStyles = {
     }),               
 }
 
+const backgroundColorDark = '#191919';
+const colorDark = 'white';
+
+// Estilização para darkmode
+const selectStylesDark = {
+    input: (styles)=> ({
+        ...styles,
+        color: colorDark,
+    }),    
+    valueContainer: (styles)=> ({
+        ...styles,
+        backgroundColor: backgroundColorDark,
+        color: colorDark,
+    }),
+    control: (styles)=>({
+        ...styles,
+        backgroundColor: backgroundColorDark,
+        color: colorDark,
+        border: '1px solid #000000',
+    }),    
+    indicatorsContainer: (styles)=> ({
+        ...styles,
+        backgroundColor: backgroundColorDark,
+        color: colorDark,
+    }),
+    menuPortal: (styles)=>({
+        ...styles,
+        zIndex: 1000,
+        color: colorDark,
+    }),
+    singleValue: (styles)=>({
+        ...styles,
+        color: colorDark,
+    }),
+    multiValue: (styles)=>({
+        ...styles,
+        color: colorDark,
+        backgroundColor: backgroundColorDark,
+        border: '1px solid white',
+    }),
+    multiValueLabel: (styles)=>({
+        ...styles,
+        color: colorDark,
+        backgroundColor: backgroundColorDark,
+    }),
+    multiValueRemove: (styles)=>({
+        ...styles,
+        color: colorDark,
+        backgroundColor: backgroundColorDark,
+        padding: '2px',
+        border: '1px solid white',
+        
+    }),
+    placeholder: (styles)=> ({
+        ...styles,
+        //backgroundColor: backgroundColorDark,
+        color: colorDark,
+    }),
+    menu: (styles)=>({
+        ...styles,
+        //zIndex: 1000,
+        backgroundColor: backgroundColorDark,
+        color: colorDark,
+    }),
+    option: (styles)=>({
+        ...styles,
+        zIndex: 9999,
+        backgroundColor: backgroundColorDark,
+        color: colorDark,
+        borderBottom: '1px solid #ccc',
+    }),               
+}
+
 const Select =  (props)=>{
     const { autoFormat } = props;
     const valores = autoFormat ?  formatToSelect(props.options) : props.options;
+    const isDarkMode = useTheme()?.palette?.mode === 'dark';
     
     return (
     <ReactSelect
         components={animetedComponents}
-        styles={selectStyles}
+        styles={isDarkMode ? selectStylesDark : selectStyles}
         {...props}
         options={valores}
         menuPlacement="auto"
