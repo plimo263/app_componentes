@@ -8,7 +8,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   });
 
 // Componente Dialog para outros tipos de conteudo
-const DialogExibicao = ({fecharDialogo, corpo, larguraMaxima, fullTela, comoSlide})=>{
+const DialogExibicao = ({fecharDialogo, corpo, larguraMaxima, fullTela, comoSlide, sxContent})=>{
 
     return (
         <Dialog open={Boolean(corpo)} 
@@ -18,7 +18,9 @@ const DialogExibicao = ({fecharDialogo, corpo, larguraMaxima, fullTela, comoSlid
             TransitionComponent={comoSlide && Transition}
         >
             
-            <DialogContent>
+            <DialogContent
+                sx={sxContent}
+            >
                 {corpo}
             </DialogContent>
             <DialogActions>
@@ -27,6 +29,9 @@ const DialogExibicao = ({fecharDialogo, corpo, larguraMaxima, fullTela, comoSlid
 
         </Dialog>
     )
+}
+DialogExibicao.defaultProps = {
+    sxContent: {}
 }
 //
 DialogExibicao.propTypes = {
