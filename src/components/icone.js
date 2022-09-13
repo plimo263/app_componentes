@@ -122,6 +122,7 @@ import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import MoodIcon from '@mui/icons-material/Mood';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 
 const Icone = (props) => {
@@ -366,6 +367,8 @@ const Icone = (props) => {
             return <PictureAsPdfIcon {...props} />;
         case 'DoDisturb':
             return <DoDisturbIcon {...props} />;
+        case 'DoneAll':
+            return <DoneAllIcon {...props} />;
         default:
             return '';
     }
@@ -388,7 +391,8 @@ const TIPO_ICONES = [
     'EditOff', 'PrecisionManufacturing', 'CarRental', 'ViewWeek', 'CancelPresentation', 'Savings', 'Male', 'Female', 'DateRange',
     'AccountTree', 'MergeType', 'AirlineStops', 'People', 'ContactMail', 'RecordVoiceOver', 'Schedule', 
     'AccountBalanceWallet', 'Mediation', 'Security', 'LinkedCamera', 'AdminPanelSettings', 'Analytics',
-    'ManageAccounts', 'ModelTraining', 'Paid', 'NoteAltOutlined', 'Mood', 'PictureAsPdf', 'DoDisturb'
+    'ManageAccounts', 'ModelTraining', 'Paid', 'NoteAltOutlined', 'Mood', 'PictureAsPdf', 'DoDisturb',
+    'DoneAll',
 ];
 
 Icone.propTypes = {
