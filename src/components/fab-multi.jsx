@@ -28,7 +28,7 @@ const animateScale = {
 const FabMotion = motion(Fab);
 const StackMotion = motion(Stack);
 
-function FabMulti({ color, icon, fabs }) {
+function FabMulti({ color, icon, fabs, autoClose }) {
   const [toggle, setToggle] = useToggle(null);
 
   return (
@@ -43,7 +43,12 @@ function FabMulti({ color, icon, fabs }) {
             {fabs.map((ele, idx) => (
               <FabMotion
                 {...animateScale}
-                onClick={ele.onClick}
+                onClick={() => {
+                  if (autoClose) {
+                    setToggle();
+                  }
+                  ele.onClick();
+                }}
                 color={ele.color || color}
                 key={idx}
                 size="small"
@@ -73,9 +78,12 @@ function FabMulti({ color, icon, fabs }) {
 FabMulti.defaultProps = {
   icon: "Add",
   color: "success",
+  autoClose: true,
 };
 
 FabMulti.propTypes = {
+  /** */
+  autoClose: PropTypes.bool,
   /** Representa o icone do botão de expansão principal */
   icon: PropTypes.string,
   /** Representa a cor default do botão principal */
