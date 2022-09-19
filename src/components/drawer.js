@@ -19,7 +19,7 @@ const Deslizavel = ({ corpo, fecharDrawer })=>(
       open={Boolean(corpo)}
       onClose={fecharDrawer}
     >
-        <Paper elevation={3} sx={{ borderRadius: 0, mb: 1, zIndex: 1000, position: 'sticky', top: 0, }}>
+        <Paper elevation={1} sx={{ borderRadius: 0, mb: 1, zIndex: 1000, position: 'sticky', top: 0, }}>
             <Puller />
         </Paper>
       {corpo}
