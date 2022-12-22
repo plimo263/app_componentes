@@ -138,7 +138,9 @@ Select.propTypes = {
         ) 
       ]).isRequired,
     /** Recebe um booleano que indica que o array será autoformatado */
-    autoFormat: PropTypes.bool
+    autoFormat: PropTypes.bool,
+    /** Recebe um defaultValue para determinar os pré-selecionados */
+    defaultValue: PropTypes.oneOfType([PropTypes.array, PropTypes.string ])
 };
 
 
