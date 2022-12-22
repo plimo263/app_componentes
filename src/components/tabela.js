@@ -41,7 +41,6 @@ import {
   Container,
   FormControlLabel,
   styled,
-  ButtonBase,
 } from "@mui/material";
 /*
  * Um componente que faz utilização de uma linda tabela, customizavel com recursos como:
@@ -708,13 +707,16 @@ const Tabela = (props) => {
           </tbody>
           {calcularRodape && (
             // <tfoot style={styleRodape}>
-            <TFoot style={styleRodape}>
+            <TFoot>
               {footerGroups.map((footerGroup) => (
                 <tr {...footerGroup.getHeaderGroupProps()}>
                   {footerGroup.headers.map((column) => (
                     <Th {...column.getHeaderProps()}>
                       {/* <th {...column.getHeaderProps()}> */}
-                      <Paper sx={sxCabecalho} elevation={2}>
+                      <Paper 
+                          sx={{...sxCabecalho, ...styleRodape}} 
+                          //sx={sxCabecalho}
+                        elevation={2}>
                         <Stack
                           sx={{ pl: 0.5 }}
                           alignItems="center"
@@ -870,19 +872,20 @@ const BaixarEmExcel = memo(({ cabe, corpo, optTabela, URL }) => {
             }
           />
         ))}
-      <ButtonBase
-      onClick={() => setIntencaoBaixar(true)}
-      sx={{
-        borderRadius: "100%",
-        mr: 1,
-        p: .5,
-        backgroundColor: (theme) => theme.palette.primary.main,
-        color: (theme) => theme.palette.primary.contrastText,
-      }}
-      title="Clique para baixar a planilha em Excel"
+      <IconButton
+        size="small"
+        disableRipple
+        onClick={() => setIntencaoBaixar(true)}
+        sx={{
+          borderRadius: "100%",
+          mr: 1,
+          backgroundColor: (theme) => theme.palette.secondary.main,
+          color: (theme) => theme.palette.secondary.contrastText,
+        }}
+        title="Clique para baixar a planilha em Excel"
       >
-      <FileDownloadIcon />
-      </ButtonBase>
+        <FileDownloadIcon />
+      </IconButton>
     </>
   );
 });
