@@ -109,6 +109,7 @@ const selectStylesDark = {
 const Select =  (props)=>{
     const { autoFormat } = props;
     const valores = autoFormat ?  formatToSelect(props.options) : props.options;
+    const defaultValue = props.defaultValue ? autoFormat ? formatToSelect(props.defaultValue) : props.defaultValue : null;
     const isDarkMode = useTheme()?.palette?.mode === 'dark';
     
     return (
@@ -116,9 +117,11 @@ const Select =  (props)=>{
         components={animetedComponents}
         styles={isDarkMode ? selectStylesDark : selectStyles}
         {...props}
+        defaultValue={defaultValue}
         options={valores}
         menuPlacement="auto"
         menuPosition='fixed'
+
     />
     )
 }
