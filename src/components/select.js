@@ -93,7 +93,7 @@ const selectStylesDark = {
     }),
     menu: (styles)=>({
         ...styles,
-        //zIndex: 1000,
+        zIndex: 1000,
         backgroundColor: backgroundColorDark,
         color: colorDark,
     }),
@@ -109,7 +109,6 @@ const selectStylesDark = {
 const Select =  (props)=>{
     const { autoFormat } = props;
     const valores = autoFormat ?  formatToSelect(props.options) : props.options;
-    const defaultValue = props.defaultValue ? autoFormat ? formatToSelect(props.defaultValue) : props.defaultValue : null;
     const isDarkMode = useTheme()?.palette?.mode === 'dark';
     
     return (
@@ -117,10 +116,9 @@ const Select =  (props)=>{
         components={animetedComponents}
         styles={isDarkMode ? selectStylesDark : selectStyles}
         {...props}
-        defaultValue={defaultValue}
         options={valores}
         menuPlacement="auto"
-        menuPosition='fixed'
+        //menuPosition='fixed'
 
     />
     )
@@ -138,9 +136,7 @@ Select.propTypes = {
         ) 
       ]).isRequired,
     /** Recebe um booleano que indica que o array será autoformatado */
-    autoFormat: PropTypes.bool,
-    /** Recebe um defaultValue para determinar os pré-selecionados */
-    defaultValue: PropTypes.oneOfType([PropTypes.array, PropTypes.string ])
+    autoFormat: PropTypes.bool
 };
 
 
