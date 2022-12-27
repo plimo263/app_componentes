@@ -1,3 +1,5 @@
+import { Paper } from "@mui/material";
+import { green, orange, yellow } from "@mui/material/colors";
 import React from "react";
 import Tabela from "../components/tabela";
 import DATA from "../data/MOCK_DATA3.json";
@@ -77,7 +79,7 @@ AlteraRodape.args = {
   alteraRodape: { 1: "CUSTOMIZADO", 2: "EU CUSTOMIZEI", 3: 10 },
   monetario: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
 };
-
+//
 export const Header = Template.bind({});
 
 Header.story = {
@@ -114,6 +116,51 @@ Header.args = {
       ],
     },
   ],
+  corpo: corpo,
+  monetario: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+};
+
+export const HeaderEstilizado = Template.bind({});
+
+HeaderEstilizado.story = {
+  parameters: {
+    docs: {
+      storyDescription: "Tabela com cabecalho estilizado.",
+    },
+  },
+};
+
+HeaderEstilizado.args = {
+  cabe: [
+    {
+      cabecalho: "LOJA",
+      colunas: ["LOJA", "EMPRESA"],
+    },
+    {
+      cabecalho: "VENDEDOR",
+      colunas: ["VENDEDORLOJA"],
+    },
+    {
+      cabecalho: "FORMA DE PAGAMENTO",
+      colunas: [
+        "DINHEIRO",
+        "CARTÃO DEBITO",
+        "CARTÃO CREDITO",
+        "CHEQUE",
+        "CREDIARIO",
+        "CONVENIO",
+        "BOLETO",
+        "A RECEBER",
+        "DEP. EM CONTA",
+        "TOTAL",
+      ],
+    },
+  ],
+  styleSuperCabecalho: {
+    0: { p: 1, m: 0, borderRadius: 0, backgroundColor: green[500] },
+    1: { p: 1, m: 0, borderRadius: 0, backgroundColor: orange[500] },
+    2: { p: 1, m: 0, borderRadius: 0, backgroundColor: yellow[500] },
+  },
   corpo: corpo,
   monetario: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
 };

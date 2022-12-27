@@ -279,55 +279,57 @@ function formatarCabe(cabe, opt) {
       Header: "ID",
       accessor: "id",
       disableGlobalFilter: true,
-    }];
-    //
-    let idxContador = 0; // Contador para indexar os cabecalhos
-    cabe.forEach((ele, idx) => {
-      // Determina quem é o indice (se tiver cabecalho ele assume o contador)
-      let indice = ele?.cabecalho ? idxContador : idx;
-      const _OBJ = {
-        // Se este cabecalho tiver a propriedade header devemos gerar ele de outra forma
-        Header: ele?.cabecalho ? ele.cabecalho : ele,
-        Cell: ({ value, row }) => {
-          /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
-          if (opt?.envolver && opt.envolver?.hasOwnProperty(indice)) {
-            return opt.envolver[indice](value, row.id, row);
-          }
-          return formatarValores(value, indice, opt);
-        },
-        Footer: ({ rows, column }) => {
-          // Verifica se tem uma sobreescricao de valor para o rodape
-          if (opt?.alteraRodape && opt.alteraRodape?.hasOwnProperty(indice)) {
-            return formatarValores(opt.alteraRodape[indice], indice, opt);
-          }
-          // // E o campo monetario vamos somar a coluna e retornar o valor
-          if (opt?.monetario && opt.monetario.includes(indice)) {
-            const valor = _.sum(_.map(rows, (r) => r.values[indice]));
-            return converter(valor);
-          }
-          // Se o indice da soma for acionado
-          if (opt?.soma && opt.soma.includes(indice)) {
-            const valor = _.sum(_.map(rows, (r) => r.values[indice]));
-            return valor;
-          }
-          // // Nao precisa de calculo retorne o valor da coluna
-          return column.Header;
-        },
-      };
-      // Verifica se o opt tem os atributos que sao ordenaveis como numero
-      if (opt?.monetario && opt.monetario.includes(indice)) {
-        _OBJ.sortType = (a, b) => (a.values[indice] > b.values[indice] ? 1 : -1);
-      }
-      // Se for percentual
-      if (opt?.percentual && opt.percentual.includes(indice)) {
-        _OBJ.sortType = (a, b) => (a.values[indice] > b.values[indice] ? 1 : -1);
-      }
-      // Se ele tiver cabecalho insere o array colunas em columns
-      if(ele?.cabecalho){
-        _OBJ.superCabecalho = true; // Propriedade que permite formatar o superHeader identificando-o na hora de construir a tabela
-        _OBJ['columns'] = ele.colunas.map((elex)=>{
+    },
+  ];
+  //
+  let idxContador = 0; // Contador para indexar os cabecalhos
+  cabe.forEach((ele, idx) => {
+    // Determina quem é o indice (se tiver cabecalho ele assume o contador)
+    let indice = ele?.cabecalho ? idxContador : idx;
+    const _OBJ = {
+      // Se este cabecalho tiver a propriedade header devemos gerar ele de outra forma
+      Header: ele?.cabecalho ? ele.cabecalho : ele,
+      Cell: ({ value, row }) => {
+        /** Veja se opt tem envolver, se sim executa a funcao de callback passando value */
+        if (opt?.envolver && opt.envolver?.hasOwnProperty(indice)) {
+          return opt.envolver[indice](value, row.id, row);
+        }
+        return formatarValores(value, indice, opt);
+      },
+      Footer: ({ rows, column }) => {
+        // Verifica se tem uma sobreescricao de valor para o rodape
+        if (opt?.alteraRodape && opt.alteraRodape?.hasOwnProperty(indice)) {
+          return formatarValores(opt.alteraRodape[indice], indice, opt);
+        }
+        // // E o campo monetario vamos somar a coluna e retornar o valor
+        if (opt?.monetario && opt.monetario.includes(indice)) {
+          const valor = _.sum(_.map(rows, (r) => r.values[indice]));
+          return converter(valor);
+        }
+        // Se o indice da soma for acionado
+        if (opt?.soma && opt.soma.includes(indice)) {
+          const valor = _.sum(_.map(rows, (r) => r.values[indice]));
+          return valor;
+        }
+        // // Nao precisa de calculo retorne o valor da coluna
+        return column.Header;
+      },
+    };
+    // Verifica se o opt tem os atributos que sao ordenaveis como numero
+    if (opt?.monetario && opt.monetario.includes(indice)) {
+      _OBJ.sortType = (a, b) => (a.values[indice] > b.values[indice] ? 1 : -1);
+    }
+    // Se for percentual
+    if (opt?.percentual && opt.percentual.includes(indice)) {
+      _OBJ.sortType = (a, b) => (a.values[indice] > b.values[indice] ? 1 : -1);
+    }
+    // Se ele tiver cabecalho insere o array colunas em columns
+    if (ele?.cabecalho) {
+      _OBJ.superCabecalho = true; // Propriedade que permite formatar o superHeader identificando-o na hora de construir a tabela
+      _OBJ["idxHeader"] = idx.toString(); // Define o indice para que o header possa ser referenciado para estilização ou substituição
+      _OBJ["columns"] = ele.colunas.map((elex) => {
         //
-          const obj = {
+        const obj = {
           Header: elex,
           accessor: idxContador.toString(),
           Cell: ({ value, row }) => {
@@ -355,19 +357,18 @@ function formatarCabe(cabe, opt) {
             // // Nao precisa de calculo retorne o valor da coluna
             return column.Header;
           },
-        
-          };
-          // Incrementa o indice para não duplicar ao gerar o header customizado
-          idxContador++;
-          return obj;
-        });
-      } else {
-        _OBJ.accessor = indice.toString();
-      }
+        };
+        // Incrementa o indice para não duplicar ao gerar o header customizado
+        idxContador++;
+        return obj;
+      });
+    } else {
+      _OBJ.accessor = indice.toString();
+    }
 
-      inCabe.push(_OBJ);
-    });
-    return inCabe;
+    inCabe.push(_OBJ);
+  });
+  return inCabe;
 }
 // Funcao para formatar o corpo
 function formatarCorpo(corpo) {
@@ -453,7 +454,6 @@ const Filtro = memo(
 );
 
 const Tabela = (props) => {
-  
   // Extraindo propriedades a serem usadas
   const {
     alteraRodape,
@@ -475,6 +475,7 @@ const Tabela = (props) => {
     data,
     monetario,
     envolver,
+    styleSuperCabecalho,
     tamanho,
     render,
     cabe,
@@ -624,12 +625,14 @@ const Tabela = (props) => {
   //       //
 
   //   }, [corpo, pagina, fatiaRegistros, rows, globalFilter]);
-  
-  const fnSetFiltro = useCallback(filtro=>{
-    setGlobalFilter(filtro); 
-    if(setDefaultFiltro) setDefaultFiltro(filtro);
-    
-  }, [ setGlobalFilter, setDefaultFiltro ]);
+
+  const fnSetFiltro = useCallback(
+    (filtro) => {
+      setGlobalFilter(filtro);
+      if (setDefaultFiltro) setDefaultFiltro(filtro);
+    },
+    [setGlobalFilter, setDefaultFiltro]
+  );
 
   // veja se tem rowID selecionado
   let trSelecionado, trSelecionadoDados;
@@ -758,6 +761,7 @@ const Tabela = (props) => {
                     sxSuperCabecalho={sxSuperCabecalho}
                     isSorted={column.isSorted}
                     isSortedDesc={column.isSortedDesc}
+                    styleSuperCabecalho={styleSuperCabecalho}
                   />
                 ))}
               </tr>
@@ -812,10 +816,11 @@ const Tabela = (props) => {
                   {footerGroup.headers.map((column) => (
                     <Th {...column.getHeaderProps()}>
                       {/* <th {...column.getHeaderProps()}> */}
-                      <Paper 
-                          sx={{...sxCabecalho, ...styleRodape}} 
-                          //sx={sxCabecalho}
-                        elevation={2}>
+                      <Paper
+                        sx={{ ...sxCabecalho, ...styleRodape }}
+                        //sx={sxCabecalho}
+                        elevation={2}
+                      >
                         <Stack
                           sx={{ pl: 0.5 }}
                           alignItems="center"
@@ -851,26 +856,46 @@ const Tabela = (props) => {
 };
 const sxIcone = { fontSize: 12 };
 // Componente do cabecalho
-const ThCabe = memo(({ column, isSorted, isSortedDesc, sxCabecalho, sxSuperCabecalho }) => (
-  <Th {...column.getHeaderProps(column.getSortByToggleProps())}>
-    {/* <th {...column.getHeaderProps(column.getSortByToggleProps())}> */}
-    <Paper sx={column?.superCabecalho ? sxSuperCabecalho : sxCabecalho} elevation={2}>
-      <Stack alignItems="center" direction="row" justifyContent="center">
-        {column?.superCabecalho ? null : isSorted ? (
-          isSortedDesc ? (
-            <KeyboardArrowDownIcon sx={sxIcone} />
+const ThCabe = memo(
+  ({
+    column,
+    isSorted,
+    isSortedDesc,
+    sxCabecalho,
+    sxSuperCabecalho,
+    styleSuperCabecalho,
+  }) => (
+    <Th {...column.getHeaderProps(column.getSortByToggleProps())}>
+      {/* <th {...column.getHeaderProps(column.getSortByToggleProps())}> */}
+      <Paper
+        sx={
+          styleSuperCabecalho &&
+          styleSuperCabecalho?.hasOwnProperty(column.idxHeader)
+            ? styleSuperCabecalho[column.idxHeader]
+            : column?.superCabecalho
+            ? sxSuperCabecalho
+            : sxCabecalho
+        }
+        elevation={2}
+      >
+        <Stack alignItems="center" direction="row" justifyContent="center">
+          {column?.superCabecalho ? null : isSorted ? (
+            isSortedDesc ? (
+              <KeyboardArrowDownIcon sx={sxIcone} />
+            ) : (
+              <KeyboardArrowUpIcon sx={sxIcone} />
+            )
           ) : (
-            <KeyboardArrowUpIcon sx={sxIcone} />
-          )
-        ) : (
-          <UnfoldMoreIcon sx={sxIcone} />
-        )}
-        {column.render("Header")}
-      </Stack>
-    </Paper>
-    {/* </th> */}
-  </Th>
-));
+            <UnfoldMoreIcon sx={sxIcone} />
+          )}
+
+          {column.render("Header")}
+        </Stack>
+      </Paper>
+      {/* </th> */}
+    </Th>
+  )
+);
 // Componente para o registro (tr)
 const TrCorpo = memo(
   ({
@@ -1121,10 +1146,15 @@ Tabela.propTypes = {
   /** Recebe o tamanho da tabela em numero (600) ou string ('650px' ou '65vh') */
   tamanho: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   /** Objeto que é um array de Strings que compoem o cabecalho da tabela. Ou caso vá usar superCabecalhos deve ser um array com cabecalho e colunas. EX: [{cabecaho: 'INFO', colunas: ['NOME', 'SOBRENOME', 'EMAIL]}, {cabecalho: 'CONTATO', colunas: ['CELULAR', 'FIXO']} ] */
-  cabe: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.shape({
-    cabecalho: PropTypes.string,
-    colunas: PropTypes.arrayOf(PropTypes.string)
-  })])).isRequired,
+  cabe: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        cabecalho: PropTypes.string,
+        colunas: PropTypes.arrayOf(PropTypes.string),
+      }),
+    ])
+  ).isRequired,
   /** Um array com outro array dentro ou um objeto {id: idx, data: Array} */
   corpo: PropTypes.array.isRequired,
   /** Um array de numeros que representam os indices das colunas que devem ser formatadas para data */
@@ -1137,7 +1167,9 @@ Tabela.propTypes = {
   soma: PropTypes.arrayOf(PropTypes.number),
   /** Um objeto numeros que são os indices das colunas que receberam um componente internamente executando a função passada como valor desta chave {1: ()=> {} } */
   envolver: PropTypes.objectOf(PropTypes.number),
-  /** Um objeto que determina um estilo a ser aplicado ao registro selecionado ex: {backgroundColor: '#b71c1c', 'color': 'white'} */
+  /** Um objeto numeros que são os indices das colunas do superCabecalho que retornam um objeto style para estilização daquela coluna do superCabecalho */
+  styleSuperCabecalho: PropTypes.objectOf(PropTypes.number),
+  /** Um objeto que determina um estilo a ser aplicado ao registro selecionado ex: {backgroundColor: 'red', 'color': 'white'} */
   styleTrSelecionado: PropTypes.object,
   /** Um objeto que determina um estilo a ser aplicado ao corpo da tabela */
   styleCorpo: PropTypes.object,
@@ -1162,7 +1194,7 @@ Tabela.propTypes = {
 };
 //
 Tabela.defaultProps = {
-  defaultFiltro: '',
+  defaultFiltro: "",
   style: {},
   ocultarColuna: false,
   styleCabe: {},
@@ -1182,7 +1214,6 @@ Tabela.defaultProps = {
     backgroundColor: (theme) => theme.palette.primary.light,
     m: 0,
     p: 1,
-
   },
   tamanho: "60vh",
   calcularRodape: false,
