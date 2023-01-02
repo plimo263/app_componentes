@@ -13,7 +13,7 @@ const DialogExibicao = ({fecharDialogo, corpo, larguraMaxima, fullTela, comoSlid
     return (
         <Dialog open={Boolean(corpo)} 
             fullWidth={larguraMaxima}
-            maxWidth='lg'
+            maxWidth={false}
             fullScreen={fullTela}
             TransitionComponent={comoSlide && Transition}
         >
