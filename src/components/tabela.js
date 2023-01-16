@@ -495,6 +495,8 @@ const Tabela = (props) => {
     onContextMenu,
     defaultFiltro,
     setDefaultFiltro,
+    onClickTd,
+    styleTDSelecionado,
   } = props;
   const optTabela = {
     percentual,
@@ -796,6 +798,8 @@ const Tabela = (props) => {
                   styleTrSelecionado={styleTrSelecionado}
                   row={row}
                   toggleAllRowsSelected={toggleAllRowsSelected}
+                  onClickTd={onClickTd}
+                  styleTDSelecionado={styleTDSelecionado}
                 />
               );
 
@@ -929,6 +933,8 @@ const TrCorpo = memo(
     isSelected,
     styleTrSelecionado,
     toggleAllRowsSelected,
+    onClickTd,
+    styleTDSelecionado,
   }) => {
     return (
       <tr
@@ -948,6 +954,8 @@ const TrCorpo = memo(
               cell={cell}
               idxC={idxC}
               styleTD={styleTD}
+              onClickTd={onClickTd}
+              styleTDSelecionado={styleTDSelecionado}
             />
           );
         })}
@@ -957,7 +965,15 @@ const TrCorpo = memo(
 );
 // Componente para registro de um td (para o corpo)
 const TdCorpo = memo(
-  ({ onContextMenu, trSelecionado, cell, idxC, styleTD }) => {
+  ({
+    onContextMenu,
+    trSelecionado,
+    cell,
+    idxC,
+    styleTD,
+    onClickTd,
+    styleTDSelecionado,
+  }) => {
     const {
       palette: { mode },
     } = useTheme();
@@ -967,7 +983,22 @@ const TdCorpo = memo(
         isDark={mode === "dark"}
         {...cell.getCellProps()}
         style={
-          Object.keys(styleTD).includes(idxC.toString()) ? styleTD[idxC] : {}
+          Object.keys(styleTD).includes(idxC.toString())
+            ? styleTD[idxC]
+            : _.keys(styleTDSelecionado).includes(`${trSelecionado}_${idxC}`)
+            ? styleTDSelecionado[`${trSelecionado}_${idxC}`]
+            : {}
+        }
+        onClick={
+          onClickTd
+            ? () =>
+                onClickTd(
+                  trSelecionado,
+                  cell.column.id,
+                  cell.column.Header,
+                  cell.value
+                )
+            : null
         }
         onContextMenu={
           onContextMenu
@@ -1217,6 +1248,10 @@ Tabela.propTypes = {
   styleTH: PropTypes.object,
   /** Esta props recbe um objeto indexado que permite sobreescrever o rodape */
   alteraRodape: PropTypes.objectOf(PropTypes.number),
+  /** Permite executar uma função de callback quando uma celula for clicada, expondo informações como o trSelecionado, nome da coluna, indice da coluna e valor do campo. EX: onClickTd(trSelecionado, idColuna, nomeColuna, valorColuna) */
+  onClickTd: PropTypes.func,
+  /** Permite definir uma estilização a uma celula ou mais celulas informadas. A chave do objeto deve ser trSelecionado_indiceColuna. EX: { '1425_2': {color: 'blue'} }*/
+  styleTDSelecionado: PropTypes.objectOf(PropTypes.string),
 };
 //
 Tabela.defaultProps = {
