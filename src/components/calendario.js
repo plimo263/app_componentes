@@ -31,6 +31,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { ptBR } from "date-fns/locale";
 import { useToggle } from "react-use";
 import { AnimatePresence, motion } from "framer-motion";
+import DrawerExibicao from "./drawer";
 
 //
 const sxCol = {
@@ -112,9 +113,23 @@ const Calendario = ({
     },
     [aguardar, onClick, renderModalLateral, diaSelecionado, setDiaSelecionado]
   );
+  // Funcao de callback para fechar o drawer que é exibido quando se utiliza a renderizacao lateral
+  const fnFecharDrawer = useCallback(() => {
+    setDiaSelecionado(null);
+  }, [setDiaSelecionado]);
 
   return (
     <Container disableGutters maxWidth="lg">
+      {isMobile && diaSelecionado && (
+        <DrawerExibicao
+          fecharDrawer={fnFecharDrawer}
+          corpo={
+            <Paper sx={{ minHeight: "50vh" }}>
+              {renderModalLateral(diaSelecionado)}
+            </Paper>
+          }
+        />
+      )}
       <Stack>
         <Stack direction="row" justifyContent="space-between">
           <Button
@@ -148,17 +163,19 @@ const Calendario = ({
         </Stack>
         <Stack direction="row">
           <AnimatePresence>
-            {diaSelecionado && renderModalLateral && (
+            {diaSelecionado && !isMobile && (
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: "33.33%", transition: { duration: 0.2 } }}
                 exit={{ width: 0.01, transition: { duration: 0.1 } }}
                 key="modalLateral"
               >
-                {renderModalLateral(diaSelecionado)}
+                <Paper sx={{ minHeight: "100%" }}>
+                  {renderModalLateral(diaSelecionado)}
+                </Paper>
               </motion.div>
             )}
-            <Stack flex={1}>
+            <Stack sx={{ zIndex: 2 }} flex={1}>
               <Stack direction="row">
                 {nomeDias.map((ele, idx) => (
                   <CalendarioHeader

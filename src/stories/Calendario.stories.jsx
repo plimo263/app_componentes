@@ -2,7 +2,7 @@ import React from "react";
 import Calendario from "../components/calendario";
 import { Caption } from "../components/tipografia";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
-import { Paper, Typography } from "@mui/material";
+import { Paper, Stack, Typography } from "@mui/material";
 
 export default {
   title: "Example/Calendario",
@@ -138,9 +138,14 @@ export const ComRenderModalLateral = Template.bind({});
 ComRenderModalLateral.args = {
   dataInicial: "2022-05-01",
   renderModalLateral: (dia) => (
-    <Paper sx={{ minHeight: "100%" }}>
-      <Typography variant="h4">Olá, hoje é {dia}</Typography>
-    </Paper>
+    <Stack>
+      <Typography
+        sx={{ whiteSpace: "nowrap", overflow: "hidden" }}
+        variant="h4"
+      >
+        Olá, hoje é {dia}
+      </Typography>
+    </Stack>
   ),
 };
 
