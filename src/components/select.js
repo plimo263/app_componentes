@@ -30,7 +30,13 @@ const selectStyles = {
         ...styles,
         zIndex: 1000,
         color: 'black',
-    }),               
+    }),
+    menuPortal: (styles)=>({
+        ...styles,
+        zIndex: 1000,
+        color: 'black',
+    }),
+                   
 }
 
 const backgroundColorDark = '#191919';
