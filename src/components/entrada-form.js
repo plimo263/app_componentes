@@ -22,6 +22,8 @@ import InputPassword from "./input-password";
 import RadioForm from "./radio-form";
 import { Caption, Subtitle2 } from "./tipografia";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import EditorTextRich from "./editor-text-rich";
+import { useCallback } from "react";
 
 // Funcao para formatar ao select
 function formatarParaSelect(arr, concatRotulo = "") {
@@ -32,6 +34,27 @@ function formatarParaSelect(arr, concatRotulo = "") {
   }));
   return newArr;
 }
+
+// EditorTextRich
+const EntradaTextRich = memo(
+  ({ defaultValue, field, placeholder, error, disabled }) => {
+    const onChange = useCallback(
+      (value) => {
+        field.onChange(value);
+      },
+      [field]
+    );
+    return (
+      <EditorTextRich
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        onChange={onChange}
+        error={error}
+        disabled={disabled}
+      />
+    );
+  }
+);
 
 // Text, Textarea, number
 const EntradaFormNormal = memo((props) => {
@@ -305,7 +328,7 @@ const ConnectForm = (props) => {
               sx={{ p: 0.5, display: exibirCampoPorPadrao ? "block" : "none" }}
               item
               {...itemGrid}
-              key={name}
+              key={idx}
             >
               <Paper {...wrapperProps}>
                 {ele?.titulo && (
@@ -384,6 +407,16 @@ const ConnectForm = (props) => {
                             }}
                             error={!!errors[name] && schemaMessageError[name]}
                             icon={ele.icon}
+                          />
+                        );
+                      case "textrich": // Texto com formatacao
+                        return (
+                          <EntradaTextRich
+                            // {...propsController.field}
+                            field={propsController.field}
+                            {...ele}
+                            error={!!errors[name] && schemaMessageError[name]}
+                            disabled={wait || disabled}
                           />
                         );
                       default:
@@ -529,7 +562,7 @@ const ExternoEntradaForm = (props) => {
     schema,
     onSubmit,
     schemaMessageError,
-    schemaValidator,
+    //schemaValidator,
   } = props;
   // const obj = {};
   // if(schemaValidator){
@@ -628,6 +661,7 @@ EntradaForm.propTypes = {
         "switch",
         "file",
         "radio",
+        "textrich",
       ]).isRequired,
       /** O valor default do item */
       defaultValue: PropTypes.string,
