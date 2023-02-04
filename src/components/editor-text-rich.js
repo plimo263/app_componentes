@@ -246,6 +246,8 @@ const insertImage = (editor, url) => {
   const text = { text: "" };
   const image = { type: "image", url, children: [text] };
   Transforms.insertNodes(editor, image);
+  // Para criar uma quebra de linha apos inserção da foto
+  Transforms.insertNodes(editor, {type: "paragraph", children: [text]});
 };
 // Verifica se a URL é de uma imagem
 const isImageUrl = (url) => {
@@ -833,6 +835,7 @@ const ImageElement = ({ attributes, children, element }) => {
   // Verificar se tem a props de alinhamento e alinhar de acordo
   const styleDiv = {
     display: "flex",
+    cursor: 'pointer'
   };
   if (element.textAlign) {
     switch (element.textAlign) {
@@ -847,22 +850,21 @@ const ImageElement = ({ attributes, children, element }) => {
         break;
     }
   }
-
   const selected = useSelected();
   const focused = useFocused();
   return (
     <>
-      <Modal sx={{ p: 1 }} open={zoomImage} onClose={toggleZoomImage}>
+      <Modal onBackdropClick={toggleZoomImage} sx={{ p: 1 }} open={zoomImage} onClose={toggleZoomImage}>
         <>
-        <Fab color="primary" onClick={toggleZoomImage} size="small" sx={{position: 'fixed', right: 16, top: 16}}>
+        <Fab title='Fechar Imagem maximizada' color="primary" onClick={toggleZoomImage} size="small" sx={{position: 'fixed', right: 16, top: 16}}>
           <Icone icone='Close' />
         </Fab>
         <ZoomImage src={element.url} alt="Imagem do formulario" />
         </>
       </Modal>
-      <div {...attributes}>
+      <div {...attributes} title='Dê um duplo clique para maximizar'>
         {children}
-        <div onClick={toggleZoomImage} contentEditable={false} style={styleDiv}>
+        <div onDoubleClick={toggleZoomImage} contentEditable={false} style={styleDiv}>
           <img
             src={element.url}
             alt="Imagem do formulario"
