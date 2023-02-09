@@ -39,7 +39,7 @@ const  ScrollInfinito = ({ itens, render, itensPorPagina, tamanho }) => {
     <div style={{overflowY: 'auto', maxHeight: tamanho}} ref={rootRef}>
         {fatiaRegistros.map((ele,idx)=>(
             <span key={idx}>
-                {render(ele)}
+                {render(ele, idx)}
             </span>
         ))}
          {/* Isto previne que o loading fique aparecendo mesmo em registros menores que 100 */}
