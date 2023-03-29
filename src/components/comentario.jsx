@@ -1,13 +1,13 @@
 import React, { useRef, useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { IconButton, Stack, TextField, Collapse } from "@mui/material";
-import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
+import Picker, { SkinTones } from "emoji-picker-react";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import SendIcon from "@mui/icons-material/Send";
 import { useClickAway } from "react-use";
 
 // Componente que cria um painel para insercao/edicao de comentario
-const Comentario = ({ enviarComEnter, onEnviarComentario }) => {
+const Comentario = ({ enviarComEnter, onEnviarComentario, placeholder }) => {
   const refEmoji = useRef(null);
 
   const [verPainelEmoji, setVerPainelEmoji] = useState(false);
@@ -15,7 +15,7 @@ const Comentario = ({ enviarComEnter, onEnviarComentario }) => {
   // Cria uma funcao para registrar o emoji no corpo do comentario
   const fnRegistraEmoji = (e, emoji) => {
     //setVerPainelEmoji(false);
-    setComentario((state) => state + emoji.emoji);
+    setComentario((state) => state + e.emoji);
   };
   // Cria uma funcao que vai registrar o comentario do feed do usuario
   const fnEnviarComentario = () => {
@@ -69,7 +69,7 @@ const Comentario = ({ enviarComEnter, onEnviarComentario }) => {
             disableSearchBar
             onEmojiClick={fnRegistraEmoji}
             disableAutoFocus={true}
-            skinTone={SKIN_TONE_MEDIUM_DARK}
+            skinTone={SkinTones}
             groupNames={{ smileys_people: "PEOPLE" }}
             native
           />
@@ -83,7 +83,7 @@ const Comentario = ({ enviarComEnter, onEnviarComentario }) => {
           variant="standard"
           fullWidth
           type="textarea"
-          placeholder="Digite seu comentário"
+          placeholder={placeholder}
           multiline
           value={comentario}
           onChange={fnOnChange}
@@ -105,11 +105,13 @@ Comentario.propTypes = {
   enviarComEnter: PropTypes.bool,
   /** Uma função de callback responsavel por receber o comentario */
   onEnviarComentario: PropTypes.func.isRequired,
+  /** Texto explicativo do que o campo espera */
 };
 
 Comentario.defaultProps = {
   enviarComEnter: false,
   onEnviarComentario: () => {},
+  placeholder: "Digite seu comentário",
 };
 
 export default Comentario;

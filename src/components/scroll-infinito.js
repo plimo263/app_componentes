@@ -36,7 +36,7 @@ const  ScrollInfinito = ({ itens, render, itensPorPagina, tamanho }) => {
   
 
   return (
-    <div style={{overflowY: 'auto', maxHeight: tamanho}} ref={rootRef}>
+    <div style={{overflowY: 'auto', overflowX: 'hidden', maxHeight: tamanho}} ref={rootRef}>
         {fatiaRegistros.map((ele,idx)=>(
             <span key={idx}>
                 {render(ele, idx)}

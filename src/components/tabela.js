@@ -498,6 +498,7 @@ const Tabela = (props) => {
     setDefaultFiltro,
     onClickTd,
     styleTDSelecionado,
+    validarValorNegativo,
   } = props;
   const optTabela = {
     percentual,
@@ -527,6 +528,7 @@ const Tabela = (props) => {
         alteraRodape,
       }),
     [
+      dataHora,
       alteraRodape,
       percentual,
       telefone,
@@ -793,6 +795,7 @@ const Tabela = (props) => {
               prepareRow(row);
               return (
                 <TrCorpo
+                  validarValorNegativo={validarValorNegativo}
                   onContextMenu={onContextMenu}
                   key={idxR}
                   isSelected={row.isSelected}
@@ -937,10 +940,21 @@ const TrCorpo = memo(
     toggleAllRowsSelected,
     onClickTd,
     styleTDSelecionado,
+    validarValorNegativo,
   }) => {
+    // Verifica se tem valor negativo
+    const isValorNegativo = validarValorNegativo
+      ? row.cells?.some((val) =>
+          !isNaN(val.value) && val.value < 0 ? true : false
+        )
+      : false;
+    const styleNegativo = { color: "red" };
+
     return (
       <tr
-        style={isSelected ? styleTrSelecionado : {}}
+        style={
+          isValorNegativo ? styleNegativo : isSelected ? styleTrSelecionado : {}
+        }
         onClick={() => {
           toggleAllRowsSelected(false);
           row.toggleRowSelected(!isSelected);
@@ -1254,6 +1268,8 @@ Tabela.propTypes = {
   onClickTd: PropTypes.func,
   /** Permite definir uma estilização a uma celula ou mais celulas informadas. A chave do objeto deve ser trSelecionado_indiceColuna. EX: { '1425_2': {color: 'blue'} }*/
   styleTDSelecionado: PropTypes.objectOf(PropTypes.string),
+  /** Permite aplicar um indicativo a valores negativos no registro. Automtaticamente inclui uma fonte vermelha nos registros onde algum campo ser determinado como negativo */
+  validarValorNegativo: PropTypes.bool,
 };
 //
 Tabela.defaultProps = {

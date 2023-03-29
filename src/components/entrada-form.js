@@ -37,7 +37,7 @@ function formatarParaSelect(arr, concatRotulo = "") {
 
 // EditorTextRich
 const EntradaTextRich = memo(
-  ({ defaultValue, field, placeholder, error, disabled }) => {
+  ({ extraProps, defaultValue, field, placeholder, error, disabled }) => {
     const onChange = useCallback(
       (value) => {
         field.onChange(value);
@@ -51,6 +51,7 @@ const EntradaTextRich = memo(
         onChange={onChange}
         error={error}
         disabled={disabled}
+        {...extraProps}
       />
     );
   }
