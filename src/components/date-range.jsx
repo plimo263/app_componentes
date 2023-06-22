@@ -24,7 +24,7 @@ function DateRange({
   //
   useEffect(() => {
     onChange([dataDe, dataAte].join("_"));
-  }, [dataDe, dataAte]);
+  }, [dataDe, dataAte, onChange]);
 
   return (
     <Stack spacing={1} direction={{ xs: "column", md: "row" }}>
