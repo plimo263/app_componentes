@@ -349,6 +349,29 @@ const ITENS10 = [
   },
 ];
 
+const ITENS11 = [
+  {
+    name: "pergunta1",
+    label: "",
+    type: "radio",
+    orientation: "horizontal",
+    itens: [
+      [1, "SIM"],
+      [2, "NÃO"],
+    ],
+    titulo: "Escolha de candidato",
+    descricao:
+      "Dentre os candidatos deste ano (2022) você votaria no mesmo que votou na última eleição ?",
+  },
+  {
+    name: "data_faixa",
+    type: "date_range",
+    defaultValue: "2023-06-01_2023-06-10",
+    labelFrom: "Primeiro",
+    labelTo: "Segunda data",
+  },
+];
+
 export default {
   title: "Example/EntradaForm",
   component: EntradaForm,
@@ -606,6 +629,24 @@ ComTituloEDescricao.story = {
   parameters: {
     docs: {
       storyDescription: "Formulario com questao envolvendo titulo e descricao",
+    },
+  },
+};
+
+export const ComDateRange = Template.bind({});
+
+ComDateRange.args = {
+  schema: ITENS11,
+
+  onSubmit: (val) => {
+    window.alert(JSON.stringify(val));
+  },
+};
+
+ComDateRange.story = {
+  parameters: {
+    docs: {
+      storyDescription: "Formulario com o campo dateRange",
     },
   },
 };

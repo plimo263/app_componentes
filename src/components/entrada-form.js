@@ -19,6 +19,7 @@ import { createNumberMask } from "text-mask-addons";
 import Select from "./select";
 import Icone from "./icone";
 import InputPassword from "./input-password";
+import DateRange from "./date-range";
 import RadioForm from "./radio-form";
 import { Caption, Subtitle2 } from "./tipografia";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -34,6 +35,39 @@ function formatarParaSelect(arr, concatRotulo = "") {
   }));
   return newArr;
 }
+
+//
+const EntradaDateRange = memo(
+  ({
+    extraProps,
+    defaultValue,
+    field,
+    placeholder,
+    error,
+    disabled,
+    labelFrom,
+    labelTo,
+  }) => {
+    const onChange = useCallback(
+      (value) => {
+        field.onChange(value);
+      },
+      [field]
+    );
+    return (
+      <DateRange
+        labelFrom={labelFrom}
+        labelTo={labelTo}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        onChange={onChange}
+        error={error}
+        disabled={disabled}
+        {...extraProps}
+      />
+    );
+  }
+);
 
 // EditorTextRich
 const EntradaTextRich = memo(
@@ -306,7 +340,8 @@ const ConnectForm = (props) => {
               case "radio":
                 ele.itens = opcoes;
                 break;
-              default: // Eles nao tem opcoes so esperam o valor default
+              default:
+                // Eles nao tem opcoes so esperam o valor default
                 itemDefaultValue = opcoes;
                 break;
             }
@@ -329,7 +364,7 @@ const ConnectForm = (props) => {
               sx={{ p: 0.5, display: exibirCampoPorPadrao ? "block" : "none" }}
               item
               {...itemGrid}
-              key={idx}
+              key={name}
             >
               <Paper {...wrapperProps}>
                 {ele?.titulo && (
@@ -414,6 +449,15 @@ const ConnectForm = (props) => {
                         return (
                           <EntradaTextRich
                             // {...propsController.field}
+                            field={propsController.field}
+                            {...ele}
+                            error={!!errors[name] && schemaMessageError[name]}
+                            disabled={wait || disabled}
+                          />
+                        );
+                      case "date_range": // Um registro com dois input date que trabalham juntos
+                        return (
+                          <EntradaDateRange
                             field={propsController.field}
                             {...ele}
                             error={!!errors[name] && schemaMessageError[name]}
@@ -663,6 +707,7 @@ EntradaForm.propTypes = {
         "file",
         "radio",
         "textrich",
+        "date_range",
       ]).isRequired,
       /** O valor default do item */
       defaultValue: PropTypes.string,
