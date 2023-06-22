@@ -15,6 +15,7 @@ function DateRange({
   labelTo,
   defaultValue,
   onChange,
+  fullWidth,
 }) {
   const [de, ate] = defaultValue ? defaultValue.split("_") : ["", ""];
   //
@@ -28,6 +29,7 @@ function DateRange({
   return (
     <Stack spacing={1} direction={{ xs: "column", md: "row" }}>
       <TextField
+        fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
         label={labelFrom}
         type="date"
@@ -38,6 +40,7 @@ function DateRange({
         helperText={error && <Caption>{error}</Caption>}
       />
       <TextField
+        fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
         label={labelTo}
         type="date"
@@ -54,6 +57,7 @@ function DateRange({
 DateRange.defaultProps = {
   labelFrom: "Data Inicial",
   labelTo: "Data Final",
+  fullWidth: true,
 };
 
 DateRange.propTypes = {
@@ -69,6 +73,8 @@ DateRange.propTypes = {
   error: PropTypes.string,
   /** Desabilita as entradas para não receber valor. */
   disabled: PropTypes.bool,
+  /** Faz com que o campo de data estique por toda a tela */
+  fullWidth: PropTypes.bool,
 };
 
 export default DateRange;
