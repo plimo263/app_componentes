@@ -345,7 +345,14 @@ const ConnectForm = (props) => {
                 itemDefaultValue = opcoes;
                 break;
             }
-            exibirCampoPorPadrao = true;
+            // Caso não tenha itens não exibir
+            exibirCampoPorPadrao = Array.isArray(opcoes)
+              ? opcoes.length > 0
+                ? true
+                : false
+              : opcoes
+              ? true
+              : false;
           }
           // Define tipografias padrao para titulo e descricao
           const tituloTipografia = ele?.tituloTipografia
